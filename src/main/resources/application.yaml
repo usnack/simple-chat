@@ -1,0 +1,107 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: simplechat
+  profiles:
+    include: secret
+    active: local
+  jpa:
+    hibernate:
+      ddl-auto: validate  # production ????? validate ??
+    properties:
+      hibernate:
+        show_sql: false   # System.out?? ?????? ?? SQL? ??? ??
+        format_sql: true  # SQL pretty print
+        use_sql_comments: true
+        jdbc:
+          time_zone: UTC # DB ??? ??
+        default_batch_fetch_size: 100  # ArrayList? ????? in Query? ??
+    open-in-view: false   # OSIV ?? off
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/${spring.application.name}
+    username: ${spring.application.name}
+    password: ${spring.application.name}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000 # 5?
+      connection-timeout: 20000 # 20?
+      max-lifetime: 1200000 # 20?
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql: trace
+    org.springframework: info
+    io.usnack: debug
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    # hikari ??
+    hikari:
+      maximum-pool-size: 30
+      minimum-idle: 10
+      idle-timeout: 300000
+      connection-timeout: 20000
+      max-lifetime: 1200000
+      # ??? ?? ??
+      leak-detection-threshold: 60000
+      # ???? ??? ???
+      validation-timeout: 5000
+      keepalive-time: 300000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        show_sql: false
+        cache:
+          use_second_level_cache: true
+          region:
+            factory_class: org.hibernate.cache.ehcache.EhCacheRegionFactory
+
+logging:
+  level:
+    root: error
+    org.springframework: error
+    org.hibernate.SQL: error
+    io.usnack: info
+  file:
+    name: ./logs/application.log
+  logback:
+    rollingpolicy:
+      max-file-size: 100MB
+      max-history: 30
+      total-size-cap: 3GB
