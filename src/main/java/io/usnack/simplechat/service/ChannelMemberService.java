@@ -1,9 +1,8 @@
 package io.usnack.simplechat.service;
 
+import io.usnack.simplechat.dto.data.ChannelMemberDto;
 import io.usnack.simplechat.dto.request.ChannelMemberCreateRequest;
 import io.usnack.simplechat.dto.request.ChannelMemberUpdateRequest;
-import io.usnack.simplechat.dto.response.ChannelMemberDetailResponse;
-import io.usnack.simplechat.dto.response.ChannelMemberListResponse;
 import io.usnack.simplechat.entity.ChannelMember;
 import io.usnack.simplechat.mapstruct.ChannelMemberMapper;
 import io.usnack.simplechat.repository.ChannelMemberRepository;
@@ -29,7 +28,7 @@ public class ChannelMemberService {
 
 
     @Transactional
-    public ChannelMemberDetailResponse createChannelMember(ChannelMemberCreateRequest request) {
+    public ChannelMemberDto createChannelMember(ChannelMemberCreateRequest request) {
         UUID channelId = request.channelId();
         UUID userId = request.userId();
 
@@ -45,33 +44,33 @@ public class ChannelMemberService {
         ChannelMember channelMemberToCreate = new ChannelMember(userId, channelId);
 
         ChannelMember createdChannelMember = channelMemberRepository.save(channelMemberToCreate);
-        ChannelMemberDetailResponse response = channelMemberMapper.toDetailResponse(createdChannelMember);
+        ChannelMemberDto response = channelMemberMapper.toDto(createdChannelMember);
         return response;
     }
 
-    public ChannelMemberDetailResponse findChannelMemberById(UUID channelMemberId) {
+    public ChannelMemberDto findChannelMemberById(UUID channelMemberId) {
         return channelMemberRepository.findById(channelMemberId)
-                .map(channelMemberMapper::toDetailResponse)
+                .map(channelMemberMapper::toDto)
                 .orElseThrow(() -> new NoSuchElementException(String.format("ChannelMember with id %s not found", channelMemberId)));
     }
 
-    public ChannelMemberListResponse findAllChannelMembers() {
-        List<ChannelMemberDetailResponse> channelMembers = channelMemberRepository.findAll()
-                .stream().map(channelMemberMapper::toDetailResponse)
+    public List<ChannelMemberDto> findAllChannelMembers() {
+        List<ChannelMemberDto> channelMembers = channelMemberRepository.findAll()
+                .stream().map(channelMemberMapper::toDto)
                 .toList();
 
-        return new ChannelMemberListResponse(channelMembers);
+        return channelMembers;
     }
 
     @Transactional
-    public ChannelMemberDetailResponse modifyChannelMember(ChannelMemberUpdateRequest request) {
+    public ChannelMemberDto modifyChannelMember(ChannelMemberUpdateRequest request) {
         UUID channelMemberId = request.channelMemberId();
         Long readAt = request.readAt();
         ChannelMember channelMember = channelMemberRepository.findById(channelMemberId)
                 .orElseThrow(() -> new NoSuchElementException(String.format("ChannelMember with id %s not found", channelMemberId)));
         channelMember.updateChannelMember(readAt);
 
-        ChannelMemberDetailResponse response = channelMemberMapper.toDetailResponse(channelMember);
+        ChannelMemberDto response = channelMemberMapper.toDto(channelMember);
         return response;
     }
 

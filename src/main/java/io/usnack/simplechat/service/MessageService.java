@@ -1,9 +1,8 @@
 package io.usnack.simplechat.service;
 
+import io.usnack.simplechat.dto.data.MessageDto;
 import io.usnack.simplechat.dto.request.MessageCreateRequest;
 import io.usnack.simplechat.dto.request.MessageUpdateRequest;
-import io.usnack.simplechat.dto.response.MessageDetailResponse;
-import io.usnack.simplechat.dto.response.MessageListResponse;
 import io.usnack.simplechat.entity.Message;
 import io.usnack.simplechat.mapstruct.MessageMapper;
 import io.usnack.simplechat.repository.ChannelRepository;
@@ -28,7 +27,7 @@ public class MessageService {
     private final UserRepository userRepository;
 
     @Transactional
-    public MessageDetailResponse createMessage(MessageCreateRequest request) {
+    public MessageDto createMessage(MessageCreateRequest request) {
         UUID channelId = request.channelId();
         UUID authorId = request.authorId();
         String content = request.content();
@@ -44,26 +43,26 @@ public class MessageService {
         Message messageToCreate = new Message(content, authorId, channelId, now);
 
         Message createdMessage = messageRepository.save(messageToCreate);
-        MessageDetailResponse response = messageMapper.toDetailResponse(createdMessage);
+        MessageDto response = messageMapper.toDto(createdMessage);
         return response;
     }
 
-    public MessageDetailResponse findMessageById(UUID messageId) {
+    public MessageDto findMessageById(UUID messageId) {
         return messageRepository.findById(messageId)
-                .map(messageMapper::toDetailResponse)
+                .map(messageMapper::toDto)
                 .orElseThrow(() -> new NoSuchElementException(String.format("Message with id %s not found", messageId)));
     }
 
-    public MessageListResponse findAllMessages() {
-        List<MessageDetailResponse> messages = messageRepository.findAll()
-                .stream().map(messageMapper::toDetailResponse)
+    public List<MessageDto> findAllMessages() {
+        List<MessageDto> messages = messageRepository.findAll()
+                .stream().map(messageMapper::toDto)
                 .toList();
 
-        return new MessageListResponse(messages);
+        return messages;
     }
 
     @Transactional
-    public MessageDetailResponse modifyMessage(MessageUpdateRequest request) {
+    public MessageDto modifyMessage(MessageUpdateRequest request) {
         UUID messageId = request.messageId();
         String content = request.content();
         long now = Instant.now().toEpochMilli();
@@ -72,7 +71,7 @@ public class MessageService {
                 .orElseThrow(() -> new NoSuchElementException(String.format("Message with id %s not found", messageId)));
         message.updateMessage(content, now);
 
-        MessageDetailResponse response = messageMapper.toDetailResponse(message);
+        MessageDto response = messageMapper.toDto(message);
         return response;
     }
 

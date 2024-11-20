@@ -1,8 +1,8 @@
-package io.usnack.simplechat.dto.response;
+package io.usnack.simplechat.dto.data;
 
 import java.util.UUID;
 
-public record UserDetailResponse(
+public record UserDto(
         UUID id,
         String username,
         String email,

@@ -1,9 +1,8 @@
 package io.usnack.simplechat.service;
 
+import io.usnack.simplechat.dto.data.ChannelDto;
 import io.usnack.simplechat.dto.request.ChannelCreateRequest;
 import io.usnack.simplechat.dto.request.ChannelUpdateRequest;
-import io.usnack.simplechat.dto.response.ChannelDetailResponse;
-import io.usnack.simplechat.dto.response.ChannelListResponse;
 import io.usnack.simplechat.entity.Channel;
 import io.usnack.simplechat.entity.ChannelType;
 import io.usnack.simplechat.mapstruct.ChannelMapper;
@@ -30,7 +29,7 @@ public class ChannelService {
 
 
     @Transactional
-    public ChannelDetailResponse createChannel(ChannelCreateRequest request) {
+    public ChannelDto createChannel(ChannelCreateRequest request) {
         ChannelType type = request.type();
         String name = request.name();
         String description = request.description();
@@ -48,26 +47,26 @@ public class ChannelService {
         Channel channelToCreate = new Channel(type, name, description, categoryId, ownerId, now);
 
         Channel createdChannel = channelRepository.save(channelToCreate);
-        ChannelDetailResponse response = channelMapper.toDetailResponse(createdChannel);
+        ChannelDto response = channelMapper.toDto(createdChannel);
         return response;
     }
 
-    public ChannelDetailResponse findChannelById(UUID channelId) {
+    public ChannelDto findChannelById(UUID channelId) {
         return channelRepository.findById(channelId)
-                .map(channelMapper::toDetailResponse)
+                .map(channelMapper::toDto)
                 .orElseThrow(() -> new NoSuchElementException(String.format("Channel with id %s not found", channelId)));
     }
 
-    public ChannelListResponse findAllChannels() {
-        List<ChannelDetailResponse> channels = channelRepository.findAll()
-                .stream().map(channelMapper::toDetailResponse)
+    public List<ChannelDto> findAllChannels() {
+        List<ChannelDto> channels = channelRepository.findAll()
+                .stream().map(channelMapper::toDto)
                 .toList();
 
-        return new ChannelListResponse(channels);
+        return channels;
     }
 
     @Transactional
-    public ChannelDetailResponse modifyChannel(ChannelUpdateRequest request) {
+    public ChannelDto modifyChannel(ChannelUpdateRequest request) {
         UUID channelId = request.categoryId();
         String name = request.name();
         String description = request.description();
@@ -77,7 +76,7 @@ public class ChannelService {
                 .orElseThrow(() -> new NoSuchElementException(String.format("Channel with id %s not found", channelId)));
         channel.updateChannel(name, description, categoryId, ownerId);
 
-        ChannelDetailResponse response = channelMapper.toDetailResponse(channel);
+        ChannelDto response = channelMapper.toDto(channel);
         return response;
     }
 

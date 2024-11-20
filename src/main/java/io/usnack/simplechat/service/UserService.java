@@ -1,9 +1,8 @@
 package io.usnack.simplechat.service;
 
+import io.usnack.simplechat.dto.data.UserDto;
 import io.usnack.simplechat.dto.request.UserCreateRequest;
 import io.usnack.simplechat.dto.request.UserUpdateRequest;
-import io.usnack.simplechat.dto.response.UserDetailResponse;
-import io.usnack.simplechat.dto.response.UserListResponse;
 import io.usnack.simplechat.entity.User;
 import io.usnack.simplechat.mapstruct.UserMapper;
 import io.usnack.simplechat.repository.UserRepository;
@@ -23,7 +22,7 @@ public class UserService {
     private final UserMapper userMapper;
 
     @Transactional
-    public UserDetailResponse createUser(UserCreateRequest request) {
+    public UserDto createUser(UserCreateRequest request) {
         String username = request.username();
         String email = request.email();
         String password = request.password();
@@ -32,26 +31,26 @@ public class UserService {
         User userToCreate = new User(username, email, password, avatarUrl, now);
 
         User createdUser = userRepository.save(userToCreate);
-        UserDetailResponse response = userMapper.toDetailResponse(createdUser);
+        UserDto response = userMapper.toDto(createdUser);
         return response;
     }
 
-    public UserDetailResponse findUserById(UUID userId) {
+    public UserDto findUserById(UUID userId) {
         return userRepository.findById(userId)
-                .map(userMapper::toDetailResponse)
+                .map(userMapper::toDto)
                 .orElseThrow(() -> new NoSuchElementException(String.format("User with id %s not found", userId)));
     }
 
-    public UserListResponse findAllUsers() {
-        List<UserDetailResponse> categories = userRepository.findAll()
-                .stream().map(userMapper::toDetailResponse)
+    public List<UserDto> findAllUsers() {
+        List<UserDto> categories = userRepository.findAll()
+                .stream().map(userMapper::toDto)
                 .toList();
 
-        return new UserListResponse(categories);
+        return categories;
     }
 
     @Transactional
-    public UserDetailResponse modifyUser(UserUpdateRequest request) {
+    public UserDto modifyUser(UserUpdateRequest request) {
         UUID userId = request.userId();
         String username = request.username();
         String email = request.email();
@@ -61,7 +60,7 @@ public class UserService {
                 .orElseThrow(() -> new NoSuchElementException(String.format("User with id %s not found", userId)));
         user.updateUser(username, email, password, avatarUrl);
 
-        UserDetailResponse response = userMapper.toDetailResponse(user);
+        UserDto response = userMapper.toDto(user);
         return response;
     }
 

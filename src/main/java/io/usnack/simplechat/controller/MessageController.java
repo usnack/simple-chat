@@ -1,15 +1,15 @@
 package io.usnack.simplechat.controller;
 
+import io.usnack.simplechat.dto.data.MessageDto;
 import io.usnack.simplechat.dto.request.MessageCreateRequest;
 import io.usnack.simplechat.dto.request.MessageUpdateRequest;
-import io.usnack.simplechat.dto.response.MessageDetailResponse;
-import io.usnack.simplechat.dto.response.MessageListResponse;
 import io.usnack.simplechat.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -19,32 +19,32 @@ public class MessageController {
     private final MessageService messageService;
 
     @PostMapping
-    public ResponseEntity<MessageDetailResponse> create(@RequestBody MessageCreateRequest request) {
-        MessageDetailResponse response = messageService.createMessage(request);
+    public ResponseEntity<MessageDto> create(@RequestBody MessageCreateRequest request) {
+        MessageDto response = messageService.createMessage(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
     }
 
     @GetMapping("{messageId}")
-    public ResponseEntity<MessageDetailResponse> findById(@PathVariable("messageId") UUID messageId) {
-        MessageDetailResponse response = messageService.findMessageById(messageId);
+    public ResponseEntity<MessageDto> findById(@PathVariable("messageId") UUID messageId) {
+        MessageDto response = messageService.findMessageById(messageId);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
 
     @GetMapping
-    public ResponseEntity<MessageListResponse> findAll() {
-        MessageListResponse response = messageService.findAllMessages();
+    public ResponseEntity<List<MessageDto>> findAll() {
+        List<MessageDto> response = messageService.findAllMessages();
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
 
     @PatchMapping
-    public ResponseEntity<MessageDetailResponse> update(@RequestBody MessageUpdateRequest request) {
-        MessageDetailResponse response = messageService.modifyMessage(request);
+    public ResponseEntity<MessageDto> update(@RequestBody MessageUpdateRequest request) {
+        MessageDto response = messageService.modifyMessage(request);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);

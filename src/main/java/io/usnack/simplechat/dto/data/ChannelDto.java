@@ -1,10 +1,10 @@
-package io.usnack.simplechat.dto.response;
+package io.usnack.simplechat.dto.data;
 
 import io.usnack.simplechat.entity.ChannelType;
 
 import java.util.UUID;
 
-public record ChannelDetailResponse(
+public record ChannelDto(
         UUID id,
         ChannelType type,
         String name,
