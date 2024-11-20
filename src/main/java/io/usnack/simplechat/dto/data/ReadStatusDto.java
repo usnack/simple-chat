@@ -2,7 +2,7 @@ package io.usnack.simplechat.dto.data;
 
 import java.util.UUID;
 
-public record ChannelMemberDto(
+public record ReadStatusDto(
         UUID id,
         UUID userId,
         UUID channelId,

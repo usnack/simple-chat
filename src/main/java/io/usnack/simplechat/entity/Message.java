@@ -18,14 +18,17 @@ public class Message {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String content;
-    private UUID authorId;
     private UUID channelId;
     private Long createdAt;
     private Long updatedAt;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "authorId")
+    private User author;
 
-    public Message(String content, UUID authorId, UUID channelId, Long createdAt) {
+
+    public Message(String content, User author, UUID channelId, Long createdAt) {
         this.content = content;
-        this.authorId = authorId;
+        this.author = author;
         this.channelId = channelId;
         this.createdAt = createdAt;
         this.updatedAt = -1L;

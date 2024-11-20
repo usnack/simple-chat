@@ -3,6 +3,7 @@ package io.usnack.simplechat.service;
 import io.usnack.simplechat.dto.data.ChannelDto;
 import io.usnack.simplechat.dto.request.ChannelCreateRequest;
 import io.usnack.simplechat.dto.request.ChannelUpdateRequest;
+import io.usnack.simplechat.entity.Category;
 import io.usnack.simplechat.entity.Channel;
 import io.usnack.simplechat.entity.ChannelType;
 import io.usnack.simplechat.mapstruct.ChannelMapper;
@@ -37,14 +38,13 @@ public class ChannelService {
         UUID ownerId = request.ownerId();
         long now = Instant.now().toEpochMilli();
 
-        if (!categoryRepository.existsById(categoryId)) {
-            throw new NoSuchElementException("Category with id " + categoryId + " does not exist");
-        }
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new NoSuchElementException("Category with id " + categoryId + " does not exist"));
         if (!userRepository.existsById(ownerId)) {
             throw new NoSuchElementException("User with id " + ownerId + " does not exist");
         }
 
-        Channel channelToCreate = new Channel(type, name, description, categoryId, ownerId, now);
+        Channel channelToCreate = new Channel(type, name, description, category, ownerId, now);
 
         Channel createdChannel = channelRepository.save(channelToCreate);
         ChannelDto response = channelMapper.toDto(createdChannel);
@@ -74,7 +74,9 @@ public class ChannelService {
         UUID ownerId = request.ownerId();
         Channel channel = channelRepository.findById(channelId)
                 .orElseThrow(() -> new NoSuchElementException(String.format("Channel with id %s not found", channelId)));
-        channel.updateChannel(name, description, categoryId, ownerId);
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new NoSuchElementException(String.format("Category with id %s not found", categoryId)));
+        channel.updateChannel(name, description, category, ownerId);
 
         ChannelDto response = channelMapper.toDto(channel);
         return response;

@@ -1,6 +1,7 @@
 package io.usnack.simplechat.controller;
 
 import io.usnack.simplechat.dto.data.MessageDto;
+import io.usnack.simplechat.dto.data.PageableData;
 import io.usnack.simplechat.dto.request.MessageCreateRequest;
 import io.usnack.simplechat.dto.request.MessageUpdateRequest;
 import io.usnack.simplechat.service.MessageService;
@@ -9,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -35,8 +35,12 @@ public class MessageController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MessageDto>> findAll() {
-        List<MessageDto> response = messageService.findAllMessages();
+    public ResponseEntity<PageableData<MessageDto>> findByChannelId(
+            @RequestParam("channelId") UUID channelId,
+            @RequestParam(value = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(value = "size", defaultValue = "50", required = false) int size
+    ) {
+        PageableData<MessageDto> response = messageService.findMessagesByChannelId(channelId, page, size);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);

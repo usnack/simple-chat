@@ -12,22 +12,21 @@ import java.util.UUID;
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "channelMembers")
-public class ChannelMember {
+@Table(name = "readStatus")
+public class ReadStatus {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private UUID userId;
     private UUID channelId;
     private Long readAt;
 
-    public ChannelMember(UUID userId, UUID channelId) {
+    public ReadStatus(UUID userId, UUID channelId, Long readAt) {
         this.userId = userId;
         this.channelId = channelId;
-        this.readAt = -1L;
-    }
-
-    public void updateChannelMember(Long readAt) {
         this.readAt = readAt;
     }
 
+    public void updateReadAt(Long readAt) {
+        this.readAt = readAt;
+    }
 }

@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,6 +21,8 @@ public class Category {
     private UUID id;
     private String name;
     private Long createdAt;
+    @OneToMany(mappedBy = "category")
+    private List<Channel> channels = new ArrayList<>();
 
     public Category(String name, Long createdAt) {
         this.name = name;

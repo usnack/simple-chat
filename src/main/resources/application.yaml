@@ -18,7 +18,7 @@ spring:
         jdbc:
           time_zone: UTC # DB ??? ??
         default_batch_fetch_size: 100  # ArrayList? ????? in Query? ??
-    open-in-view: false   # OSIV ?? off
+    open-in-view: true   # OSIV ?? off
   datasource:
     driver-class-name: org.postgresql.Driver
     username: ${DB_USERNAME}
@@ -55,8 +55,8 @@ spring:
 
 logging:
   level:
-    org.hibernate.SQL: debug
-    org.hibernate.type.descriptor.sql: trace
+#    org.hibernate.SQL: debug
+#    org.hibernate.type.descriptor.sql: trace
     org.springframework: info
     io.usnack: debug
 

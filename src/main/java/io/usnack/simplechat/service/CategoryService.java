@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -40,11 +39,9 @@ public class CategoryService {
     }
 
     public List<CategoryDto> findAllCategories() {
-        List<CategoryDto> categories = categoryRepository.findAll()
+        return categoryRepository.findAll()
                 .stream().map(categoryMapper::toDto)
                 .toList();
-
-        return categories;
     }
 
     @Transactional
