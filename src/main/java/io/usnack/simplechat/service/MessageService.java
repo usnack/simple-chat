@@ -68,7 +68,7 @@ public class MessageService {
 
         List<MessageDto> messageDtos = messagePage
                 .stream().map(message -> messageMapper.toDto(message))
-                .sorted(Comparator.comparingLong(MessageDto::createdAt).reversed())
+                .sorted(Comparator.comparingLong(MessageDto::createdAt))
                 .toList();
 
         boolean hasMore = messagePage.hasNext();
