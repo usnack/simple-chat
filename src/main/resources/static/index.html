@@ -5,411 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Discord Clone</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Whitney', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            display: flex;
-            height: 100vh;
-            background-color: #36393f;
-        }
-
-        /* 채널 리스트 */
-        .channels-container {
-            width: 240px;
-            background-color: #2f3136;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .server-header {
-            height: 48px;
-            padding: 0 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            color: white;
-            border-bottom: 1px solid #202225;
-            cursor: pointer;
-        }
-
-        .server-header:hover {
-            background-color: #34373c;
-        }
-
-        .server-name {
-            font-weight: 500;
-        }
-
-        .channel-list {
-            flex: 1;
-            padding: 8px;
-            overflow-y: auto;
-        }
-
-        .channel-category {
-            padding: 16px 8px 4px;
-            color: #8e9297;
-            text-transform: uppercase;
-            font-size: 12px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-        }
-
-        .category-header {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .category-arrow {
-            font-size: 10px;
-            transition: transform 0.2s;
-        }
-
-        .category-arrow.collapsed {
-            transform: rotate(-90deg);
-        }
-
-        .channel-group {
-            transition: max-height 0.2s ease-out;
-            overflow: hidden;
-        }
-
-        .channel-group.collapsed {
-            max-height: 0;
-        }
-
-        .add-channel {
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
-            color: #8e9297;
-        }
-
-        .add-channel:hover {
-            color: #dcddde;
-        }
-
-        .channel-item {
-            padding: 6px 8px;
-            margin: 2px 0;
-            color: #8e9297;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.95rem;
-            position: relative;
-        }
-
-        .channel-item .notification {
-            width: 8px;
-            height: 8px;
-            background-color: #fff;
-            border-radius: 50%;
-            position: absolute;
-            left: -4px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .channel-item .unread-counter {
-            background-color: #f23f42;
-            color: white;
-            font-size: 12px;
-            padding: 0 4px;
-            min-width: 16px;
-            height: 16px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: auto;
-            font-weight: 600;
-        }
-
-        .channel-item:hover {
-            background-color: #36393f;
-            color: #dcddde;
-        }
-
-        .channel-item.active {
-            background-color: #393c43;
-            color: white;
-        }
-
-        .channel-item.unread {
-            color: #dcddde;
-        }
-
-        /* 사용자 정보 영역 */
-        .user-info {
-            height: 52px;
-            background-color: #292b2f;
-            padding: 0 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background-color: #5865f2;
-        }
-
-        .user-details {
-            flex: 1;
-        }
-
-        .username {
-            color: white;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .user-tag {
-            color: #b9bbbe;
-            font-size: 0.75rem;
-        }
-
-        .user-controls {
-            display: flex;
-            gap: 4px;
-        }
-
-        .control-button {
-            width: 32px;
-            height: 32px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #b9bbbe;
-            cursor: pointer;
-        }
-
-        .control-button:hover {
-            background-color: #36393f;
-            color: #dcddde;
-        }
-
-        /* 메인 채팅 영역 */
-        .chat-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-header {
-            height: 48px;
-            padding: 0 16px;
-            display: flex;
-            align-items: center;
-            color: white;
-            border-bottom: 1px solid #202225;
-        }
-
-        .chat-messages {
-            flex: 1;
-            padding: 16px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-        }
-
-        .messages-container {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .message {
-            margin: 2px 0;
-            color: #dcddde;
-            display: flex;
-            gap: 16px;
-            padding: 4px 0;
-        }
-
-        .message:hover {
-            background-color: #32353b;
-        }
-
-        .message-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #5865f2;
-        }
-
-        .message-content {
-            flex: 1;
-        }
-
-        .message-header {
-            display: flex;
-            align-items: baseline;
-            gap: 8px;
-        }
-
-        .message-author {
-            color: white;
-            font-weight: 500;
-        }
-
-        .message-timestamp {
-            color: #72767d;
-            font-size: 0.75rem;
-        }
-
-        .message-text {
-            margin-top: 4px;
-            line-height: 1.375rem;
-        }
-
-        .chat-input-container {
-            padding: 16px;
-            margin-top: auto;
-        }
-
-        .chat-input {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: none;
-            background-color: #40444b;
-            color: #dcddde;
-            font-size: 1rem;
-        }
-
-        .chat-input:focus {
-            outline: none;
-        }
-
-        /* 멤버 리스트 */
-        .members-container {
-            width: 240px;
-            background-color: #2f3136;
-            padding: 16px;
-        }
-
-        .online-count, .offline-count {
-            color: #96989d;
-            font-size: 12px;
-            font-weight: 500;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            padding: 8px;
-        }
-
-        .offline-count {
-            margin-top: 16px;
-        }
-
-        .member-item {
-            padding: 6px 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #8e9297;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .member-item:hover {
-            background-color: #36393f;
-        }
-
-        .member-item.offline {
-            opacity: 0.5;
-        }
-
-        .member-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background-color: #5865f2;
-            position: relative;
-            flex-shrink: 0;
-        }
-
-        .member-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .member-name {
-            color: #fff;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .member-status {
-            color: #96989d;
-            font-size: 12px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .member-badge {
-            font-size: 14px;
-        }
-
-        .online-indicator {
-            width: 10px;
-            height: 10px;
-            background-color: #3ba55c;
-            border-radius: 50%;
-            border: 2px solid #2f3136;
-            position: absolute;
-            bottom: -2px;
-            right: -2px;
-        }
-
-        .offline-indicator {
-            width: 10px;
-            height: 10px;
-            background-color: #747f8d;
-            border-radius: 50%;
-            border: 2px solid #2f3136;
-            position: absolute;
-            bottom: -2px;
-            right: -2px;
-        }
-
-        .channel-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 500;
-            font-size: 14px;
-            margin-right: 4px;
-        }
-
-        .fa-hashtag {
-            color: #8e9297;
-            font-size: 0.95rem;
-            width: 7px;
-            margin: 0px 4px;
-        }
-    </style>
+    <link href="style.css" rel="stylesheet">
 </head>
 <body>
 <!-- 채널 리스트 -->
@@ -421,9 +17,9 @@
         <div class="channel-category" id="groupMessagesCategory">
             <div class="category-header">
                 <i class="fas fa-chevron-down category-arrow"></i>
-                <span>Group Messages</span>
+                <span>그룹 채널</span>
             </div>
-            <span class="add-channel">
+            <span class="add-group-channel">
                     <i class="fas fa-plus"></i>
                 </span>
         </div>
@@ -443,9 +39,9 @@
         <div class="channel-category" id="directMessagesCategory">
             <div class="category-header">
                 <i class="fas fa-chevron-down category-arrow"></i>
-                <span>Direct Messages</span>
+                <span>다이렉트 메시지</span>
             </div>
-            <span class="add-channel">
+            <span class="add-direct-channel">
                     <i class="fas fa-plus"></i>
                 </span>
         </div>
@@ -529,79 +125,134 @@
     </div>
 </div>
 
-<script>
-    // 채팅 기능 구현
-    const messageInput = document.getElementById('messageInput');
-    const messagesContainer = document.getElementById('messagesContainer');
-    const chatMessages = document.getElementById('chatMessages');
-
-    // 메시지 전송 함수
-    function sendMessage(text, isInitial = false) {
-        if (!text.trim()) return;
-
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'message';
-
-        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-        messageDiv.innerHTML = `
-                <div class="message-avatar"></div>
-                <div class="message-content">
-                    <div class="message-header">
-                        <span class="message-author">${isInitial ? 'Discord Bot' : 'User'}</span>
-                        <span class="message-timestamp">Today at ${timestamp}</span>
-                    </div>
-                    <div class="message-text">${text}</div>
+<!-- 채널 생성 모달 -->
+<div class="modal-backdrop" id="channelModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">채널 만들기</div>
+        </div>
+        <div class="modal-body">
+<!--            <div class="form-group">-->
+<!--                <label class="form-label">Channel Type</label>-->
+<!--                <div class="channel-type-select">-->
+<!--                    <div class="channel-type-option selected" data-type="text">-->
+<!--                        <i class="fas fa-hashtag"></i>-->
+<!--                        Text-->
+<!--                    </div>-->
+<!--                    <div class="channel-type-option" data-type="voice">-->
+<!--                        <i class="fas fa-volume-up"></i>-->
+<!--                        Voice-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+            <div class="form-group">
+                <label class="form-label">채널 이름</label>
+                <div class="form-input-prefix">
+                    <i class="fas fa-hashtag"></i>
+                    <input type="text" id="channelName" placeholder="새로운 채널" maxlength="50">
                 </div>
-            `;
+            </div>
+            <div class="form-group">
+                <label class="form-label">채널 주제</label>
+                <input type="text" class="form-input" id="channelTopic" placeholder="이 채널을 어떻게 사용하면 좋을지 모두에게 알려줍시다!">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-cancel" id="cancelButton">취소</button>
+            <button class="btn btn-create" id="createButton" disabled>채널 만들기</button>
+        </div>
+    </div>
+</div>
 
-        messagesContainer.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
+<!-- DM 생성 모달 -->
+<div class="modal-backdrop dm-modal" id="dmModal">
+    <div class="modal dm-modal-container">
+        <div class="modal-header">
+            <div class="modal-title">친구 선택하기</div>
+            <div class="modal-subtitle">친구를 9명 더 추가할 수 있어요.</div>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <div class="dm-search-wrapper">
+                    <input type="text" class="form-input" id="dmUserSearch" placeholder="친구의 사용자명 입력하기">
+                    <i class="fas fa-search dm-search-icon"></i>
+                </div>
+            </div>
+            <div class="dm-selected-users" id="selectedUsers">
+                <!-- 선택된 사용자들이 여기에 표시됩니다 -->
+            </div>
+            <div class="dm-user-list">
+                <div class="dm-user-list-header">추천</div>
+                <div class="dm-user-item">
+                    <div class="dm-user-avatar">U1</div>
+                    <div class="dm-user-info">
+                        <div class="dm-user-name">usnack</div>
+                        <div class="dm-user-status">온라인</div>
+                    </div>
+                    <div class="dm-user-checkbox"></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-cancel" id="dmCancelButton">취소</button>
+            <button class="btn btn-create" id="dmCreateButton">DM 생성</button>
+        </div>
+    </div>
+</div>
 
-    // Enter 키 이벤트 리스너
-    messageInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            sendMessage(messageInput.value);
-            messageInput.value = '';
-        }
-    });
+<!-- 프로필 모달 -->
+<div class="modal-backdrop profile-modal" id="profileModal">
+    <div class="modal profile-modal-container">
+        <div class="profile-banner">
+            <div class="profile-buttons">
+<!--                <button class="profile-action-btn">-->
+<!--                    <i class="fas fa-volume-xmark"></i>-->
+<!--                </button>-->
+<!--                <button class="profile-action-btn">-->
+<!--                    <i class="fas fa-user"></i>-->
+<!--                </button>-->
+<!--                <button class="profile-action-btn">-->
+<!--                    <i class="fas fa-ellipsis"></i>-->
+<!--                </button>-->
+            </div>
+        </div>
+        <div class="profile-content">
+            <div class="profile-avatar-wrapper">
+                <div class="profile-avatar">
+                    <img src="/api/placeholder/80/80" alt="profile">
+                    <div class="profile-status-indicator online"></div>
+                </div>
+            </div>
+            <div class="profile-info">
+                <div class="profile-username">예토개</div>
+                <div class="profile-tag">usnack</div>
+            </div>
+            <!-- 프로필 모달의 하단부분 분기 처리 -->
+            <div class="profile-section">
+                <button class="profile-edit-btn">
+                    <i class="fas fa-pencil"></i>
+                    프로필 편집
+                </button>
+            </div>
+            <div class="profile-divider"></div>
+            <div class="profile-section">
+                <div class="profile-message-input-container">
+                    <div class="profile-message-input-wrapper">
+                        <input type="text" class="profile-message-input" placeholder="@예토개 님에게 메시지 보내기" />
+                        <div class="profile-message-actions">
+                            <button class="profile-message-emoji-btn">
+                                <i class="far fa-smile"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-    // 채널 카테고리 접기/펼치기 기능
-    const groupMessagesCategory = document.getElementById('groupMessagesCategory');
-    const directMessagesCategory = document.getElementById('directMessagesCategory');
-    const groupMessagesList = document.getElementById('groupMessagesList');
-    const directMessagesList = document.getElementById('directMessagesList');
 
-    function toggleCategory(categoryHeader, categoryList) {
-        const arrow = categoryHeader.querySelector('.category-arrow');
-        arrow.classList.toggle('collapsed');
-        categoryList.classList.toggle('collapsed');
-    }
 
-    groupMessagesCategory.addEventListener('click', (e) => {
-        if (!e.target.closest('.add-channel')) {
-            toggleCategory(groupMessagesCategory, groupMessagesList);
-        }
-    });
-
-    directMessagesCategory.addEventListener('click', (e) => {
-        if (!e.target.closest('.add-channel')) {
-            toggleCategory(directMessagesCategory, directMessagesList);
-        }
-    });
-
-    // 초기 메시지 추가
-    const initialMessages = [
-        "Welcome to Discodeit!",
-        "You can send direct messages to users or communicate in group chats.",
-        "Try sending a message by pressing Enter."
-    ];
-
-    // 시간 순서대로 메시지 추가
-    initialMessages.forEach(msg => {
-        sendMessage(msg, true);
-    });
-</script>
+<script src="index.js"></script>
 </body>
 </html>
