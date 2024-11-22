@@ -6,7 +6,7 @@ public record UserDto(
         UUID id,
         String username,
         String email,
-        String avatarUrl,
+        String profileUrl,
         Long createdAt
 ) {
 }

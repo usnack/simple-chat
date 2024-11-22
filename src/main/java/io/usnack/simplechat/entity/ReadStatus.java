@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Getter
@@ -16,17 +17,22 @@ import java.util.UUID;
 public class ReadStatus {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    private Long createdAt;
+    private Long updatedAt;
+
     private UUID userId;
     private UUID channelId;
-    private Long readAt;
+    private Long lastReadAt;
 
-    public ReadStatus(UUID userId, UUID channelId, Long readAt) {
+
+    public ReadStatus(UUID userId, UUID channelId) {
+        this.createdAt = Instant.now().toEpochMilli();
         this.userId = userId;
         this.channelId = channelId;
-        this.readAt = readAt;
     }
 
-    public void updateReadAt(Long readAt) {
-        this.readAt = readAt;
+    public void updateReadStatus(Long lastReadAt) {
+        this.updatedAt = Instant.now().toEpochMilli();
+        this.lastReadAt = lastReadAt;
     }
 }

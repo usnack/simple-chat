@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,24 +18,39 @@ import java.util.UUID;
 public class User {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    private Long createdAt;
+    private Long updatedAt;
+
     private String username;
     private String email;
     private String password;
-    private String avatarUrl;
-    private Long createdAt;
+    private String profileUrl;
 
-    public User(String username, String email, String password, String avatarUrl, Long createdAt) {
+    public User(String username, String email, String password, String profileUrl) {
+        this.createdAt = Instant.now().toEpochMilli();
         this.username = username;
         this.email = email;
         this.password = password;
-        this.avatarUrl = avatarUrl;
-        this.createdAt = createdAt;
+        this.profileUrl = profileUrl;
     }
 
-    public void updateUser(String username, String password, String email, String avatarUrl) {
-        Optional.ofNullable(username).ifPresent(value -> this.username = value);
-        Optional.ofNullable(password).ifPresent(value -> this.password = value);
-        Optional.ofNullable(email).ifPresent(value -> this.email = value);
-        Optional.ofNullable(avatarUrl).ifPresent(value -> this.avatarUrl = value);
+    public void updateUser(String username, String email, String password, String profileUrl) {
+        long now = Instant.now().toEpochMilli();
+        Optional.ofNullable(username).ifPresent(value -> {
+            this.username = value;
+            this.updatedAt = now;
+        });
+        Optional.ofNullable(email).ifPresent(value -> {
+            this.email = value;
+            this.updatedAt = now;
+        });
+        Optional.ofNullable(password).ifPresent(value -> {
+            this.password = value;
+            this.updatedAt = now;
+        });
+        Optional.ofNullable(profileUrl).ifPresent(value -> {
+            this.profileUrl = value;
+            this.updatedAt = now;
+        });
     }
 }

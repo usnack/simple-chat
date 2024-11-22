@@ -61,7 +61,7 @@
     <div class="user-info">
         <div class="user-avatar"></div>
         <div class="user-details">
-            <div class="username">Username</div>
+            <div class="username">Woody</div>
             <div class="user-tag">Online</div>
         </div>
         <div class="user-controls">
@@ -169,7 +169,6 @@
     <div class="modal dm-modal-container">
         <div class="modal-header">
             <div class="modal-title">친구 선택하기</div>
-            <div class="modal-subtitle">친구를 9명 더 추가할 수 있어요.</div>
         </div>
         <div class="modal-body">
             <div class="form-group">
@@ -178,11 +177,7 @@
                     <i class="fas fa-search dm-search-icon"></i>
                 </div>
             </div>
-            <div class="dm-selected-users" id="selectedUsers">
-                <!-- 선택된 사용자들이 여기에 표시됩니다 -->
-            </div>
             <div class="dm-user-list">
-                <div class="dm-user-list-header">추천</div>
                 <div class="dm-user-item">
                     <div class="dm-user-avatar">U1</div>
                     <div class="dm-user-info">
@@ -205,15 +200,6 @@
     <div class="modal profile-modal-container">
         <div class="profile-banner">
             <div class="profile-buttons">
-<!--                <button class="profile-action-btn">-->
-<!--                    <i class="fas fa-volume-xmark"></i>-->
-<!--                </button>-->
-<!--                <button class="profile-action-btn">-->
-<!--                    <i class="fas fa-user"></i>-->
-<!--                </button>-->
-<!--                <button class="profile-action-btn">-->
-<!--                    <i class="fas fa-ellipsis"></i>-->
-<!--                </button>-->
             </div>
         </div>
         <div class="profile-content">
@@ -251,8 +237,54 @@
     </div>
 </div>
 
+<!-- 로그인 모달 -->
+<div class="modal-backdrop login-modal" id="loginModal">
+    <div class="modal login-modal-container">
+        <div class="login-columns">
+            <!-- 왼쪽 QR코드 섹션 -->
+            <div class="login-qr-section">
+                <div class="login-qr-wrapper">
+                    <div class="login-qr-container">
+                        <i class="fas fa-qrcode login-qr-placeholder"></i>
+                    </div>
+                </div>
+                <h2 class="login-qr-title">QR 코드로 로그인</h2>
+                <div class="login-qr-description">
+                    <div>Discord 모바일 앱으로 스캔하세요</div>
+                    <div>바로 로그인됩니다</div>
+                </div>
+            </div>
 
+            <!-- 오른쪽 로그인 폼 섹션 -->
+            <div class="login-form-section">
+                <h2 class="login-form-title">돌아오신 것을 환영해요!</h2>
+                <div class="login-form-subtitle">다시 만나다니 너무 반가워요!</div>
 
-<script src="index.js"></script>
+                <form class="login-form">
+                    <div class="login-form-group">
+                        <label class="login-label">이메일 또는 전화번호</label>
+                        <input type="text" class="login-input" />
+                    </div>
+
+                    <div class="login-form-group">
+                        <label class="login-label">비밀번호</label>
+                        <input type="password" class="login-input" />
+                    </div>
+
+                    <a href="#" class="login-forgot-password">비밀번호를 잊으셨나요?</a>
+
+                    <button type="submit" class="login-submit-btn">로그인</button>
+
+                    <div class="login-register-prompt">
+                        계정이 필요한가요?
+                        <a href="#" class="login-register-link">가입하기</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="index.js"></script>
 </body>
 </html>

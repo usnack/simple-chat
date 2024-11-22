@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,36 +18,32 @@ import java.util.UUID;
 public class Channel {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    private Long createdAt;
+    private Long updatedAt;
+
     private ChannelType type;
     private String name;
     private String description;
-    private Long createdAt;
-    private Long latestMessageAt;
-    private UUID ownerId;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "categoryId", nullable = false)
-    private Category category;
 
-    public Channel(ChannelType type, String name, String description, Category category, UUID ownerId, Long createdAt) {
+    public Channel(ChannelType type, String name, String description) {
+        this.createdAt = Instant.now().toEpochMilli();
         this.type = type;
         this.name = name;
         this.description = description;
-        this.category = category;
-        this.ownerId = ownerId;
-        this.createdAt = createdAt;
-        this.latestMessageAt = -1L;
     }
 
     public void updateChannel(
-            String name, String description, Category category, UUID ownerId
+            String name,
+            String description
     ) {
-        Optional.ofNullable(name).ifPresent(value -> this.name = value);
-        Optional.ofNullable(description).ifPresent(value -> this.description = value);
-        Optional.ofNullable(category).ifPresent(value -> this.category = value);
-        Optional.ofNullable(ownerId).ifPresent(value -> this.ownerId = value);
-    }
-
-    public void updateLatestMessageAt(Long latestMessageAt) {
-        this.latestMessageAt = latestMessageAt;
+        long now = Instant.now().toEpochMilli();
+        Optional.ofNullable(name).ifPresent(value -> {
+            this.name = value;
+            this.updatedAt = now;
+        });
+        Optional.ofNullable(description).ifPresent(value -> {
+            this.description = value;
+            this.updatedAt = now;
+        });
     }
 }

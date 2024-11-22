@@ -9,7 +9,6 @@ public record ChannelDto(
         ChannelType type,
         String name,
         String description,
-        UUID categoryId,
         UUID ownerId,
         Long createdAt,
         Long latestMessageAt
