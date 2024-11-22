@@ -15,7 +15,7 @@ import java.util.UUID;
 @Table(name = "readStatus")
 public class ReadStatus {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    private UUID id;
     private UUID userId;
     private UUID channelId;
     private Long readAt;
