@@ -7,12 +7,10 @@ import io.usnack.simplechat.entity.Channel;
 import io.usnack.simplechat.entity.ChannelType;
 import io.usnack.simplechat.mapstruct.ChannelMapper;
 import io.usnack.simplechat.repository.ChannelRepository;
-import io.usnack.simplechat.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -22,29 +20,21 @@ import java.util.UUID;
 public class ChannelService {
     private final ChannelRepository channelRepository;
     private final ChannelMapper channelMapper;
-    //
-    private final UserRepository userRepository;
 
     @Transactional
     public ChannelDto createChannel(ChannelCreateRequest request) {
         ChannelType type = request.type();
         String name = request.name();
         String description = request.description();
-        UUID ownerId = request.ownerId();
-        long now = Instant.now().toEpochMilli();
 
-        if (!userRepository.existsById(ownerId)) {
-            throw new NoSuchElementException("User with id " + ownerId + " does not exist");
-        }
-
-        Channel channelToCreate = new Channel(type, name, description, ownerId, now);
+        Channel channelToCreate = new Channel(type, name, description);
 
         Channel createdChannel = channelRepository.save(channelToCreate);
         ChannelDto response = channelMapper.toDto(createdChannel);
         return response;
     }
 
-    public ChannelDto findChannelById(UUID channelId) {
+    public ChannelDto findChannel(UUID channelId) {
         return channelRepository.findById(channelId)
                 .map(channelMapper::toDto)
                 .orElseThrow(() -> new NoSuchElementException(String.format("Channel with id %s not found", channelId)));
@@ -59,14 +49,14 @@ public class ChannelService {
     }
 
     @Transactional
-    public ChannelDto modifyChannel(ChannelUpdateRequest request) {
+    public ChannelDto updateChannel(ChannelUpdateRequest request) {
         UUID channelId = request.channelId();
         String name = request.name();
         String description = request.description();
-        UUID ownerId = request.ownerId();
+
         Channel channel = channelRepository.findById(channelId)
                 .orElseThrow(() -> new NoSuchElementException(String.format("Channel with id %s not found", channelId)));
-        channel.updateChannel(name, description, ownerId);
+        channel.updateChannel(name, description);
 
         ChannelDto response = channelMapper.toDto(channel);
         return response;

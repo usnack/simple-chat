@@ -24,9 +24,13 @@ public class UserStatus {
 
     private Boolean online;
     private Long lastActiveAt;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    public UserStatus(Boolean online, Long lastActiveAt) {
+    public UserStatus(User user, Boolean online, Long lastActiveAt) {
         this.createdAt = Instant.now().getEpochSecond();
+        this.user = user;
         this.online = online;
         this.lastActiveAt = lastActiveAt;
     }

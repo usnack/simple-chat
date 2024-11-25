@@ -2,10 +2,10 @@ package io.usnack.simplechat.dto.data;
 
 import java.util.UUID;
 
-public record ReadStatusDto(
+public record UserStatusDto(
         UUID id,
         UUID userId,
-        UUID channelId,
-        Long lastReadAt
+        Boolean online,
+        Long lastActiveAt
 ) {
 }

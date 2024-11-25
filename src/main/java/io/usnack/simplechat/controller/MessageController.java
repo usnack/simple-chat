@@ -19,7 +19,7 @@ public class MessageController {
     private final MessageService messageService;
 
     @PostMapping
-    public ResponseEntity<MessageDto> create(@RequestBody MessageCreateRequest request) {
+    public ResponseEntity<MessageDto> createMessage(@RequestBody MessageCreateRequest request) {
         MessageDto response = messageService.createMessage(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -27,35 +27,35 @@ public class MessageController {
     }
 
     @GetMapping("{messageId}")
-    public ResponseEntity<MessageDto> findById(@PathVariable("messageId") UUID messageId) {
-        MessageDto response = messageService.findMessageById(messageId);
+    public ResponseEntity<MessageDto> findMessage(@PathVariable("messageId") UUID messageId) {
+        MessageDto response = messageService.findMessage(messageId);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
 
     @GetMapping
-    public ResponseEntity<PageableData<MessageDto>> findByChannelId(
+    public ResponseEntity<PageableData<MessageDto>> findAllMessagesByChannelId(
             @RequestParam("channelId") UUID channelId,
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
             @RequestParam(value = "size", defaultValue = "50", required = false) int size
     ) {
-        PageableData<MessageDto> response = messageService.findMessagesByChannelId(channelId, page, size);
+        PageableData<MessageDto> response = messageService.findAllMessagesByChannelId(channelId, page, size);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
 
     @PatchMapping
-    public ResponseEntity<MessageDto> update(@RequestBody MessageUpdateRequest request) {
-        MessageDto response = messageService.modifyMessage(request);
+    public ResponseEntity<MessageDto> updateMessage(@RequestBody MessageUpdateRequest request) {
+        MessageDto response = messageService.updateMessage(request);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
 
     @DeleteMapping("{messageId}")
-    public ResponseEntity delete(@PathVariable("messageId") UUID messageId) {
+    public ResponseEntity deleteMessage(@PathVariable("messageId") UUID messageId) {
         messageService.deleteMessage(messageId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

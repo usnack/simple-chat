@@ -27,10 +27,10 @@ public class Message {
     private UUID channelId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "authorId", nullable = false)
+    @JoinColumn(name = "author_id", nullable = false)
     private User author;
     @OneToMany(mappedBy = "message")
-    private List<MessageAsset> messageAssets = new ArrayList<>();
+    private List<Attachment> attachments = new ArrayList<>();
 
     public Message(String content, UUID channelId, User author) {
         this.createdAt = Instant.now().toEpochMilli();
@@ -40,15 +40,11 @@ public class Message {
     }
 
     public void updateMessage(
-            String content, List<MessageAsset> messageAssets
+            String content
     ) {
         long now = Instant.now().toEpochMilli();
         Optional.ofNullable(content).ifPresent(value -> {
             this.content = value;
-            this.updatedAt = now;
-        });
-        Optional.ofNullable(messageAssets).ifPresent(value -> {
-            this.messageAssets = value;
             this.updatedAt = now;
         });
     }

@@ -19,7 +19,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserDto> create(@RequestBody UserCreateRequest request) {
+    public ResponseEntity<UserDto> createUser(@RequestBody UserCreateRequest request) {
         UserDto response = userService.createUser(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -27,15 +27,15 @@ public class UserController {
     }
 
     @GetMapping("{userId}")
-    public ResponseEntity<UserDto> findById(@PathVariable("userId") UUID userId) {
-        UserDto response = userService.findUserById(userId);
+    public ResponseEntity<UserDto> findUser(@PathVariable("userId") UUID userId) {
+        UserDto response = userService.findUser(userId);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> findAll() {
+    public ResponseEntity<List<UserDto>> findAllUsers() {
         List<UserDto> response = userService.findAllUsers();
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -43,15 +43,15 @@ public class UserController {
     }
 
     @PatchMapping
-    public ResponseEntity<UserDto> update(@RequestBody UserUpdateRequest request) {
-        UserDto response = userService.modifyUser(request);
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserUpdateRequest request) {
+        UserDto response = userService.updateUser(request);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
 
     @DeleteMapping("{userId}")
-    public ResponseEntity delete(@PathVariable("userId") UUID userId) {
+    public ResponseEntity deleteUser(@PathVariable("userId") UUID userId) {
         userService.deleteUser(userId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

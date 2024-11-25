@@ -8,9 +8,5 @@ public record ChannelDto(
         UUID id,
         ChannelType type,
         String name,
-        String description,
-        UUID ownerId,
-        Long createdAt,
-        Long latestMessageAt
-) {
-}
+        String description
+) {}

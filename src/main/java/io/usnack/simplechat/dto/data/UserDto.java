@@ -7,6 +7,6 @@ public record UserDto(
         String username,
         String email,
         String profileUrl,
-        Long createdAt
+        UserStatusDto status
 ) {
 }

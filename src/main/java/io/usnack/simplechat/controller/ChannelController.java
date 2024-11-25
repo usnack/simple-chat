@@ -19,7 +19,7 @@ public class ChannelController {
     private final ChannelService channelService;
 
     @PostMapping
-    public ResponseEntity<ChannelDto> create(@RequestBody ChannelCreateRequest request) {
+    public ResponseEntity<ChannelDto> createChannel(@RequestBody ChannelCreateRequest request) {
         ChannelDto response = channelService.createChannel(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -27,15 +27,15 @@ public class ChannelController {
     }
 
     @GetMapping("{channelId}")
-    public ResponseEntity<ChannelDto> findById(@PathVariable("channelId") UUID channelId) {
-        ChannelDto response = channelService.findChannelById(channelId);
+    public ResponseEntity<ChannelDto> findChannel(@PathVariable("channelId") UUID channelId) {
+        ChannelDto response = channelService.findChannel(channelId);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<ChannelDto>> findAll() {
+    public ResponseEntity<List<ChannelDto>> findAllChannels() {
         List<ChannelDto> response = channelService.findAllChannels();
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -43,15 +43,15 @@ public class ChannelController {
     }
 
     @PatchMapping
-    public ResponseEntity<ChannelDto> update(@RequestBody ChannelUpdateRequest request) {
-        ChannelDto response = channelService.modifyChannel(request);
+    public ResponseEntity<ChannelDto> updateChannel(@RequestBody ChannelUpdateRequest request) {
+        ChannelDto response = channelService.updateChannel(request);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
 
     @DeleteMapping("{channelId}")
-    public ResponseEntity delete(@PathVariable("channelId") UUID channelId) {
+    public ResponseEntity deleteChannel(@PathVariable("channelId") UUID channelId) {
         channelService.deleteChannel(channelId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

@@ -25,6 +25,8 @@ public class User {
     private String email;
     private String password;
     private String profileUrl;
+    @OneToOne(mappedBy = "user")
+    private UserStatus status;
 
     public User(String username, String email, String password, String profileUrl) {
         this.createdAt = Instant.now().toEpochMilli();

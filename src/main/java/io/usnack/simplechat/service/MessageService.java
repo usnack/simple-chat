@@ -4,27 +4,19 @@ import io.usnack.simplechat.dto.data.MessageDto;
 import io.usnack.simplechat.dto.data.PageableData;
 import io.usnack.simplechat.dto.request.MessageCreateRequest;
 import io.usnack.simplechat.dto.request.MessageUpdateRequest;
-import io.usnack.simplechat.entity.Channel;
+import io.usnack.simplechat.entity.Attachment;
 import io.usnack.simplechat.entity.Message;
 import io.usnack.simplechat.entity.User;
 import io.usnack.simplechat.mapstruct.MessageMapper;
-import io.usnack.simplechat.mapstruct.UserMapper;
-import io.usnack.simplechat.repository.ChannelRepository;
-import io.usnack.simplechat.repository.MessageRepository;
-import io.usnack.simplechat.repository.UserRepository;
+import io.usnack.simplechat.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.util.Comparator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -34,35 +26,43 @@ public class MessageService {
     //
     private final ChannelRepository channelRepository;
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
+    private final AttachmentRepository attachmentRepository;
+    private final BinaryRepository binaryRepository;
 
     @Transactional
     public MessageDto createMessage(MessageCreateRequest request) {
+        String content = request.content();
         UUID channelId = request.channelId();
         UUID authorId = request.authorId();
-        String content = request.content();
-        long now = Instant.now().toEpochMilli();
+        List<byte[]> optionalAttachments = request.attachments();
 
-        Channel channel = channelRepository.findById(channelId)
-                .orElseThrow(() -> new NoSuchElementException("Channel with id " + channelId + " does not exist"));
+        if (!channelRepository.existsById(channelId)) {
+            throw new NoSuchElementException("Channel with id " + channelId + " does not exist");
+        }
         User author = userRepository.findById(authorId)
                 .orElseThrow(() -> new NoSuchElementException("User with id " + authorId + " does not exist"));
 
-        Message messageToCreate = new Message(content, author, channelId, now);
+        Message messageToCreate = new Message(content, channelId, author);
         Message createdMessage = messageRepository.save(messageToCreate);
-        channel.updateLatestMessageAt(createdMessage.getCreatedAt());
+
+        Optional.ofNullable(optionalAttachments)
+                .ifPresent(attachments -> attachments.forEach(binary -> {
+                    String url = binaryRepository.save(binary);
+                    Attachment attachmentToCreate = new Attachment(url, createdMessage);
+                    attachmentRepository.save(attachmentToCreate);
+                }));
 
         MessageDto response = messageMapper.toDto(createdMessage);
         return response;
     }
 
-    public MessageDto findMessageById(UUID messageId) {
+    public MessageDto findMessage(UUID messageId) {
         return messageRepository.findById(messageId)
-                .map(message -> messageMapper.toDto(message))
+                .map(messageMapper::toDto)
                 .orElseThrow(() -> new NoSuchElementException(String.format("Message with id %s not found", messageId)));
     }
 
-    public PageableData<MessageDto> findMessagesByChannelId(UUID channelId, int page, int size) {
+    public PageableData<MessageDto> findAllMessagesByChannelId(UUID channelId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Message> messagePage = messageRepository.findByChannelId(channelId, pageRequest);
 
@@ -77,14 +77,13 @@ public class MessageService {
     }
 
     @Transactional
-    public MessageDto modifyMessage(MessageUpdateRequest request) {
+    public MessageDto updateMessage(MessageUpdateRequest request) {
         UUID messageId = request.messageId();
         String content = request.content();
-        long now = Instant.now().toEpochMilli();
 
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new NoSuchElementException(String.format("Message with id %s not found", messageId)));
-        message.updateMessage(content, now);
+        message.updateMessage(content);
 
         MessageDto response = messageMapper.toDto(message);
         return response;
