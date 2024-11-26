@@ -10,23 +10,24 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Getter
-@ToString(exclude = "message")
+@ToString
 @Entity
-@Table(name = "messageAssets")
+@Table(name = "binaryContents")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Attachment {
+public class BinaryContent {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private Long createdAt;
 
-    private String url;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "message_id", nullable = false)
-    private Message message;
+    private String fileName;
+    private Long size;
+    private String contentType;
 
-    public Attachment(String url, Message message) {
+    public BinaryContent(String fileName, Long size, String contentType) {
         this.createdAt = Instant.now().toEpochMilli();
-        this.url = url;
-        this.message = message;
+
+        this.fileName = fileName;
+        this.size = size;
+        this.contentType = contentType;
     }
 }

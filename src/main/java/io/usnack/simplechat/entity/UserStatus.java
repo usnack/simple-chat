@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.Instant;
-import java.util.Optional;
 import java.util.UUID;
 
 @Getter
@@ -37,13 +36,13 @@ public class UserStatus {
 
     public void updateUserStatus(Boolean online, Long lastActiveAt) {
         long now = Instant.now().getEpochSecond();
-        Optional.ofNullable(online).ifPresent(value -> {
-            this.online = value;
+        if (online != null && !online.equals(this.online)) {
+            this.online = online;
             this.updatedAt = now;
-        });
-        Optional.ofNullable(lastActiveAt).ifPresent(value -> {
-            this.lastActiveAt = value;
+        }
+        if (lastActiveAt != null && !lastActiveAt.equals(this.lastActiveAt)) {
+            this.lastActiveAt = lastActiveAt;
             this.updatedAt = now;
-        });
+        }
     }
 }

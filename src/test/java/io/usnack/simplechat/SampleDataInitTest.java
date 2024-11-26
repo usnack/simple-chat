@@ -13,6 +13,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.*;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @SpringBootTest
 public class SampleDataInitTest {
     @Autowired
@@ -24,18 +32,31 @@ public class SampleDataInitTest {
     @Transactional
     @Test
     void init() {
-        UserCreateRequest woody = new UserCreateRequest("woody", "woody@toystory.com", "1234", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpX3WlcgO0PCqjeWjOwKkDFsLCy0QaDg7Arw&s");
-        UserCreateRequest buzz = new UserCreateRequest("buzz", "buzz@toystory.com", "1234", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_LmKIb-v_c17dYbP7ifz9O2XkCnL0x_53Cw&s");
-        UserCreateRequest jessie = new UserCreateRequest("jessie", "jessie@toystory.com", "1234", "https://lumiere-a.akamaihd.net/v1/images/open-uri20150422-20810-y1ys73_7dd5c0b7.jpeg?region=0,0,450,450");
+        Path profileDir = Paths.get("src", "test", "resources", "profiles");
+        Map<String, byte[]> profileBinaries = new HashMap<>();
+        List.of("woody", "buzz", "jessie").forEach(key -> {
+            try (
+                    FileInputStream fis = new FileInputStream(profileDir.resolve(key + ".jpeg").toFile())
+            ) {
+                byte[] bytes = fis.readAllBytes();
+                profileBinaries.put(key, bytes);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        UserCreateRequest woody = new UserCreateRequest("woody", "woody@toystory.com", "1234", null);
+        UserCreateRequest buzz = new UserCreateRequest("buzz", "buzz@toystory.com", "1234", null);
+        UserCreateRequest jessie = new UserCreateRequest("jessie", "jessie@toystory.com", "1234", null);
         UserDto createdWoody = userService.createUser(woody);
         UserDto createdBuzz = userService.createUser(buzz);
         UserDto createdJessie = userService.createUser(jessie);
 
-        ChannelCreateRequest channelCreateRequest1 = new ChannelCreateRequest(ChannelType.GROUP, "해외축구", "해외축구 토론방", createdWoody.id());
-        ChannelCreateRequest channelCreateRequest2 = new ChannelCreateRequest(ChannelType.DIRECT, "zz", "zzz", createdWoody.id());
+        ChannelCreateRequest channelCreateRequest1 = new ChannelCreateRequest(ChannelType.GROUP, "해외축구", "해외축구 토론방");
+        ChannelCreateRequest channelCreateRequest2 = new ChannelCreateRequest(ChannelType.DIRECT, "zz", "zzz");
         ChannelDto channel1 = channelService.createChannel(channelCreateRequest1);
         ChannelDto channel2 = channelService.createChannel(channelCreateRequest2);
     }
-
-
 }

@@ -6,7 +6,6 @@ public record UserDto(
         UUID id,
         String username,
         String email,
-        String profileUrl,
+        BinaryContentDto profile,
         UserStatusDto status
-) {
-}
+) { }

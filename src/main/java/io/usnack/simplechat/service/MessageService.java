@@ -2,13 +2,16 @@ package io.usnack.simplechat.service;
 
 import io.usnack.simplechat.dto.data.MessageDto;
 import io.usnack.simplechat.dto.data.PageableData;
+import io.usnack.simplechat.dto.request.BinaryContentCreateRequest;
 import io.usnack.simplechat.dto.request.MessageCreateRequest;
 import io.usnack.simplechat.dto.request.MessageUpdateRequest;
-import io.usnack.simplechat.entity.Attachment;
+import io.usnack.simplechat.entity.BinaryContent;
 import io.usnack.simplechat.entity.Message;
 import io.usnack.simplechat.entity.User;
 import io.usnack.simplechat.mapstruct.MessageMapper;
-import io.usnack.simplechat.repository.*;
+import io.usnack.simplechat.repository.ChannelRepository;
+import io.usnack.simplechat.repository.MessageRepository;
+import io.usnack.simplechat.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,31 +29,29 @@ public class MessageService {
     //
     private final ChannelRepository channelRepository;
     private final UserRepository userRepository;
-    private final AttachmentRepository attachmentRepository;
-    private final BinaryRepository binaryRepository;
+    private final BinaryContentService binaryContentService;
 
     @Transactional
     public MessageDto createMessage(MessageCreateRequest request) {
         String content = request.content();
         UUID channelId = request.channelId();
         UUID authorId = request.authorId();
-        List<byte[]> optionalAttachments = request.attachments();
 
         if (!channelRepository.existsById(channelId)) {
             throw new NoSuchElementException("Channel with id " + channelId + " does not exist");
         }
         User author = userRepository.findById(authorId)
                 .orElseThrow(() -> new NoSuchElementException("User with id " + authorId + " does not exist"));
+        List<BinaryContentCreateRequest> attachments = request.attachments();
+        List<BinaryContent> binaryContents = Optional.ofNullable(attachments)
+                .map(binaryContentRequests -> binaryContentRequests.stream()
+                        .map(binaryContentService::createBinaryContent)
+                        .toList()
+                )
+                .orElse(new ArrayList<>());
 
-        Message messageToCreate = new Message(content, channelId, author);
+        Message messageToCreate = new Message(content, channelId, author, binaryContents);
         Message createdMessage = messageRepository.save(messageToCreate);
-
-        Optional.ofNullable(optionalAttachments)
-                .ifPresent(attachments -> attachments.forEach(binary -> {
-                    String url = binaryRepository.save(binary);
-                    Attachment attachmentToCreate = new Attachment(url, createdMessage);
-                    attachmentRepository.save(attachmentToCreate);
-                }));
 
         MessageDto response = messageMapper.toDto(createdMessage);
         return response;
@@ -67,6 +68,7 @@ public class MessageService {
         Page<Message> messagePage = messageRepository.findByChannelId(channelId, pageRequest);
 
         List<MessageDto> messageDtos = messagePage
+                // FIXME attachments mapping
                 .stream().map(message -> messageMapper.toDto(message))
                 .sorted(Comparator.comparingLong(MessageDto::createdAt))
                 .toList();

@@ -9,11 +9,10 @@ import lombok.ToString;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Getter
-@ToString
+@ToString(exclude = {"attachments", "author"})
 @Entity
 @Table(name = "messages")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,23 +28,29 @@ public class Message {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
-    @OneToMany(mappedBy = "message")
-    private List<Attachment> attachments = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "message_attachments",
+            joinColumns = @JoinColumn(name = "message_id"),
+            inverseJoinColumns = @JoinColumn(name = "binary_content_id")
+    )
+    private List<BinaryContent> attachments = new ArrayList<>();
 
-    public Message(String content, UUID channelId, User author) {
+    public Message(String content, UUID channelId, User author, List<BinaryContent> attachments) {
         this.createdAt = Instant.now().toEpochMilli();
         this.content = content;
         this.channelId = channelId;
         this.author = author;
+        this.attachments = attachments;
     }
 
     public void updateMessage(
             String content
     ) {
         long now = Instant.now().toEpochMilli();
-        Optional.ofNullable(content).ifPresent(value -> {
-            this.content = value;
+        if (content != null && !content.equals(this.content)) {
+            this.content = content;
             this.updatedAt = now;
-        });
+        }
     }
 }

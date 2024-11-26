@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.Instant;
-import java.util.Optional;
 import java.util.UUID;
 
 @Getter
@@ -24,35 +23,37 @@ public class User {
     private String username;
     private String email;
     private String password;
-    private String profileUrl;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "profile_id")
+    private BinaryContent profile;
     @OneToOne(mappedBy = "user")
     private UserStatus status;
 
-    public User(String username, String email, String password, String profileUrl) {
+    public User(String username, String email, String password, BinaryContent profile) {
         this.createdAt = Instant.now().toEpochMilli();
         this.username = username;
         this.email = email;
         this.password = password;
-        this.profileUrl = profileUrl;
+        this.profile = profile;
     }
 
-    public void updateUser(String username, String email, String password, String profileUrl) {
+    public void updateUser(String username, String email, String password, BinaryContent profile) {
         long now = Instant.now().toEpochMilli();
-        Optional.ofNullable(username).ifPresent(value -> {
-            this.username = value;
+        if (username != null && !username.equals(this.username)) {
+            this.username = username;
             this.updatedAt = now;
-        });
-        Optional.ofNullable(email).ifPresent(value -> {
-            this.email = value;
+        }
+        if (email != null && !email.equals(this.email)) {
+            this.email = email;
             this.updatedAt = now;
-        });
-        Optional.ofNullable(password).ifPresent(value -> {
-            this.password = value;
+        }
+        if (password != null && !password.equals(this.password)) {
+            this.password = password;
             this.updatedAt = now;
-        });
-        Optional.ofNullable(profileUrl).ifPresent(value -> {
-            this.profileUrl = value;
+        }
+        if (profile != null && !profile.equals(this.profile)) {
+            this.profile = profile;
             this.updatedAt = now;
-        });
+        }
     }
 }

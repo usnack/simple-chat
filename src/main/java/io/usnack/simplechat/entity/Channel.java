@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.Instant;
-import java.util.Optional;
 import java.util.UUID;
 
 @Getter
@@ -37,13 +36,13 @@ public class Channel {
             String description
     ) {
         long now = Instant.now().toEpochMilli();
-        Optional.ofNullable(name).ifPresent(value -> {
-            this.name = value;
+        if (name != null && !name.equals(this.name)) {
+            this.name = name;
             this.updatedAt = now;
-        });
-        Optional.ofNullable(description).ifPresent(value -> {
-            this.description = value;
+        }
+        if (description != null && !description.equals(this.description)) {
+            this.description = description;
             this.updatedAt = now;
-        });
+        }
     }
 }

@@ -1,8 +1,10 @@
 package io.usnack.simplechat.service;
 
 import io.usnack.simplechat.dto.data.UserDto;
+import io.usnack.simplechat.dto.request.BinaryContentCreateRequest;
 import io.usnack.simplechat.dto.request.UserCreateRequest;
 import io.usnack.simplechat.dto.request.UserUpdateRequest;
+import io.usnack.simplechat.entity.BinaryContent;
 import io.usnack.simplechat.entity.User;
 import io.usnack.simplechat.entity.UserStatus;
 import io.usnack.simplechat.mapstruct.UserMapper;
@@ -24,15 +26,18 @@ public class UserService {
     private final UserMapper userMapper;
 
     private final UserStatusRepository userStatusRepository;
+    private final BinaryContentService binaryContentService;
 
     @Transactional
     public UserDto createUser(UserCreateRequest request) {
         String username = request.username();
         String email = request.email();
         String password = request.password();
-        String profileUrl = request.profileUrl();
-        User userToCreate = new User(username, email, password, profileUrl);
+        BinaryContentCreateRequest binaryContentCreateRequest = request.profileImage();
 
+        BinaryContent profileBinaryContent = binaryContentService.createBinaryContent(binaryContentCreateRequest);
+
+        User userToCreate = new User(username, email, password, profileBinaryContent);
         User createdUser = userRepository.save(userToCreate);
 
         UserStatus userStatusToCreate = new UserStatus(createdUser, true, Instant.now().getEpochSecond());
@@ -62,11 +67,14 @@ public class UserService {
         String username = request.username();
         String email = request.email();
         String password = request.password();
-        String profileUrl = request.profileUrl();
+        BinaryContentCreateRequest binaryContentCreateRequest = request.profileImage();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException(String.format("User with id %s not found", userId)));
-        user.updateUser(username, email, password, profileUrl);
+
+        BinaryContent profileBinaryContent = binaryContentService.createBinaryContent(binaryContentCreateRequest);
+
+        user.updateUser(username, email, password, profileBinaryContent);
 
         UserDto response = userMapper.toDto(user);
         return response;

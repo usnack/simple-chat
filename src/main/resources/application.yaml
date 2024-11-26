@@ -24,7 +24,17 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
+aws:
+  s3:
+    bucket: usnack
+    region: ap-northeast-2
+    access-key: ${AWS_S3_ACCESS_KEY}
+    secret-key: ${AWS_S3_SECRET_KEY}
 
+binary-storage:
+    mode: s3 # s3 || local
+    local-disk:
+      root-directory: /local-binary-storage
 
 ---
 spring:
