@@ -1,15 +1,20 @@
 package io.usnack.simplechat.controller;
 
 import io.usnack.simplechat.dto.data.UserDto;
+import io.usnack.simplechat.dto.request.BinaryContentCreateRequest;
 import io.usnack.simplechat.dto.request.UserCreateRequest;
 import io.usnack.simplechat.dto.request.UserUpdateRequest;
 import io.usnack.simplechat.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -18,9 +23,22 @@ import java.util.UUID;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody UserCreateRequest request) {
-        UserDto response = userService.createUser(request);
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
+    public ResponseEntity<UserDto> createUser(
+            @RequestPart("user") UserCreateRequest request,
+            @RequestPart(value = "profile", required = false) MultipartFile profile
+    ) throws IOException {
+        BinaryContentCreateRequest profileRequest = Optional.ofNullable(profile)
+                .map(multipartFile -> {
+                    try {
+                        return new BinaryContentCreateRequest(multipartFile.getOriginalFilename(), multipartFile.getContentType(), multipartFile.getBytes());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .orElse(null);
+
+        UserDto response = userService.createUser(request, Optional.ofNullable(profileRequest));
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);

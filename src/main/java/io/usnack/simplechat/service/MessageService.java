@@ -32,7 +32,7 @@ public class MessageService {
     private final BinaryContentService binaryContentService;
 
     @Transactional
-    public MessageDto createMessage(MessageCreateRequest request) {
+    public MessageDto createMessage(MessageCreateRequest request, Optional<List<BinaryContentCreateRequest>> attachmentRequests) {
         String content = request.content();
         UUID channelId = request.channelId();
         UUID authorId = request.authorId();
@@ -42,8 +42,7 @@ public class MessageService {
         }
         User author = userRepository.findById(authorId)
                 .orElseThrow(() -> new NoSuchElementException("User with id " + authorId + " does not exist"));
-        List<BinaryContentCreateRequest> attachments = request.attachments();
-        List<BinaryContent> binaryContents = Optional.ofNullable(attachments)
+        List<BinaryContent> binaryContents = attachmentRequests
                 .map(binaryContentRequests -> binaryContentRequests.stream()
                         .map(binaryContentService::createBinaryContent)
                         .toList()

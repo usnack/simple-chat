@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -29,13 +30,14 @@ public class UserService {
     private final BinaryContentService binaryContentService;
 
     @Transactional
-    public UserDto createUser(UserCreateRequest request) {
+    public UserDto createUser(UserCreateRequest request, Optional<BinaryContentCreateRequest> profileImageRequest) {
         String username = request.username();
         String email = request.email();
         String password = request.password();
-        BinaryContentCreateRequest binaryContentCreateRequest = request.profileImage();
 
-        BinaryContent profileBinaryContent = binaryContentService.createBinaryContent(binaryContentCreateRequest);
+        BinaryContent profileBinaryContent = profileImageRequest
+                .map(binaryContentService::createBinaryContent)
+                .orElse(null);
 
         User userToCreate = new User(username, email, password, profileBinaryContent);
         User createdUser = userRepository.save(userToCreate);
