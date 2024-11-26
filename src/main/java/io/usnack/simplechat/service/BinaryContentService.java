@@ -1,11 +1,13 @@
 package io.usnack.simplechat.service;
 
+import io.usnack.simplechat.dto.data.BinaryContentInputStreamDto;
 import io.usnack.simplechat.dto.request.BinaryContentCreateRequest;
 import io.usnack.simplechat.entity.BinaryContent;
 import io.usnack.simplechat.repository.BinaryContentRepository;
 import io.usnack.simplechat.util.binary.BinaryStorage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
 import java.util.NoSuchElementException;
@@ -17,6 +19,7 @@ public class BinaryContentService {
     private final BinaryContentRepository binaryContentRepository;
     private final BinaryStorage binaryStorage;
 
+    @Transactional
     public BinaryContent createBinaryContent(BinaryContentCreateRequest request) {
         String fileName = request.fileName();
         String contentType = request.contentType();
@@ -35,11 +38,14 @@ public class BinaryContentService {
         return binaryStorage.resolvePath(binaryContentId);
     }
 
-    public InputStream loadBinaryContent(UUID binaryContentId) {
-        if (!binaryContentRepository.existsById(binaryContentId)) {
-            throw new NoSuchElementException("Binary content with id " + binaryContentId + " not found");
-        }
+    public BinaryContentInputStreamDto loadBinaryContent(UUID binaryContentId) {
+        BinaryContent binaryContent = binaryContentRepository.findById(binaryContentId)
+                .orElseThrow(() -> new NoSuchElementException("Binary content with id " + binaryContentId + " not found"));
+
         String resolvedPath = binaryStorage.resolvePath(binaryContentId);
-        return binaryStorage.loadBinary(resolvedPath);
+        InputStream inputStream = binaryStorage.loadBinary(resolvedPath);
+
+        BinaryContentInputStreamDto response = new BinaryContentInputStreamDto(binaryContent.getId(), binaryContent.getFileName(), binaryContent.getSize(), binaryContent.getContentType(), resolvedPath, inputStream);
+        return response;
     }
 }

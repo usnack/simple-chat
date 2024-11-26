@@ -34,7 +34,7 @@ aws:
 binary-storage:
     mode: s3 # s3 || local
     local-disk:
-      root-directory: /local-binary-storage
+#      root-directory: /local-binary-storage
 
 ---
 spring:
@@ -69,6 +69,12 @@ logging:
 #    org.hibernate.type.descriptor.sql: trace
     org.springframework: info
     io.usnack: debug
+
+binary-storage:
+  mode: local # s3 || local
+  local-disk:
+      root-directory: ./local-binary-storage
+
 
 ---
 spring:
