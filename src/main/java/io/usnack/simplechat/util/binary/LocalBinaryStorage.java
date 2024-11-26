@@ -47,13 +47,13 @@ public class LocalBinaryStorage implements BinaryStorage {
 
     @Override
     public String resolvePath(UUID fileKey) {
-        return "/binaryContents/" + fileKey.toString();
+        return "/binaryContents/" + fileKey.toString() + "/download";
     }
 
     @Override
     public InputStream loadBinary(String path) {
         String[] paths = path.split("/");
-        String fileKey = paths[paths.length - 1];
+        String fileKey = paths[paths.length - 2];
         Path physicalFilePath = resolvePhysicalFilePath(UUID.fromString(fileKey));
         try {
             return new FileInputStream(physicalFilePath.toFile());

@@ -20,7 +20,7 @@ import java.util.UUID;
 public class BinaryContentController {
     private final BinaryContentService binaryContentService;
 
-    @GetMapping("{binaryContentId}")
+    @GetMapping("{binaryContentId}/download")
     public ResponseEntity<Resource> downloadBinaryContent(@PathVariable("binaryContentId") UUID binaryContentId) {
         BinaryContentInputStreamDto inputStreamDto = binaryContentService.loadBinaryContent(binaryContentId);
         Resource resource = new InputStreamResource(inputStreamDto.inputStream());
