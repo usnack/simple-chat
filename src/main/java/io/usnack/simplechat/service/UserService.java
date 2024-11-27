@@ -67,8 +67,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDto updateUser(UserUpdateRequest request, Optional<BinaryContentCreateRequest> optionalProfileRequest) {
-        UUID userId = request.userId();
+    public UserDto updateUser(UUID userId, UserUpdateRequest request, Optional<BinaryContentCreateRequest> optionalProfileRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException(String.format("User with id %s not found", userId)));
 

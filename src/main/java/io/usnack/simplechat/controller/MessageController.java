@@ -70,16 +70,16 @@ public class MessageController {
                 .body(response);
     }
 
-    @PatchMapping
-    public ResponseEntity<MessageDto> updateMessage(@RequestBody MessageUpdateRequest request) {
-        MessageDto response = messageService.updateMessage(request);
+    @PatchMapping("{messageId}")
+    public ResponseEntity<MessageDto> updateMessage(@PathVariable("messageId") UUID messageId, @RequestBody MessageUpdateRequest request) {
+        MessageDto response = messageService.updateMessage(messageId, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
 
     @DeleteMapping("{messageId}")
-    public ResponseEntity deleteMessage(@PathVariable("messageId") UUID messageId) {
+    public ResponseEntity<Void> deleteMessage(@PathVariable("messageId") UUID messageId) {
         messageService.deleteMessage(messageId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

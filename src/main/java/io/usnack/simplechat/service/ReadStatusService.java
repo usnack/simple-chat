@@ -57,8 +57,7 @@ public class ReadStatusService {
     }
 
     @Transactional
-    public ReadStatusDto updateReadStatus(ReadStatusUpdateRequest request) {
-        UUID readStatusId = request.readStatusId();
+    public ReadStatusDto updateReadStatus(UUID readStatusId, ReadStatusUpdateRequest request) {
         Long readAt = request.readAt();
 
         ReadStatus readStatus = readStatusRepository.findById(readStatusId)

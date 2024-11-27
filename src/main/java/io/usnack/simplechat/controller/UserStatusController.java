@@ -33,16 +33,16 @@ public class UserStatusController {
                 .body(response);
     }
 
-    @PatchMapping
-    public ResponseEntity<UserStatusDto> updateUserStatus(@RequestBody UserStatusUpdateRequest request) {
-        UserStatusDto response = userStatusService.updateUserStatus(request);
+    @PatchMapping("{userStatusId}")
+    public ResponseEntity<UserStatusDto> updateUserStatus(@PathVariable("userStatusId") UUID userStatusId, @RequestBody UserStatusUpdateRequest request) {
+        UserStatusDto response = userStatusService.updateUserStatus(userStatusId, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
 
     @DeleteMapping("{userStatusId}")
-    public ResponseEntity deleteUser(@PathVariable("userStatusId") UUID userStatusId) {
+    public ResponseEntity<Void> deleteUser(@PathVariable("userStatusId") UUID userStatusId) {
         userStatusService.deleteUserStatus(userStatusId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

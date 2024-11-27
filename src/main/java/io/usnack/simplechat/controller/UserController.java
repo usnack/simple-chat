@@ -60,8 +60,9 @@ public class UserController {
                 .body(response);
     }
 
-    @PatchMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PatchMapping(path = "{userId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<UserDto> updateUser(
+            @PathVariable("userId") UUID userId,
             @RequestPart("user") UserUpdateRequest request,
             @RequestPart(name = "profile", required = false) MultipartFile profile
     ) {
@@ -75,7 +76,7 @@ public class UserController {
                 })
                 .orElse(null);
 
-        UserDto response = userService.updateUser(request, Optional.ofNullable(profileRequest));
+        UserDto response = userService.updateUser(userId, request, Optional.ofNullable(profileRequest));
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);

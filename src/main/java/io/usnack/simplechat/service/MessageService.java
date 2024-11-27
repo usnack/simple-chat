@@ -76,8 +76,7 @@ public class MessageService {
     }
 
     @Transactional
-    public MessageDto updateMessage(MessageUpdateRequest request) {
-        UUID messageId = request.messageId();
+    public MessageDto updateMessage(UUID messageId, MessageUpdateRequest request) {
         String content = request.content();
 
         Message message = messageRepository.findById(messageId)

@@ -42,16 +42,16 @@ public class ReadStatusController {
                 .body(response);
     }
 
-    @PatchMapping
-    public ResponseEntity<ReadStatusDto> updateReadStatus(@RequestBody ReadStatusUpdateRequest request) {
-        ReadStatusDto response = readStatusService.updateReadStatus(request);
+    @PatchMapping("{readStatusId}")
+    public ResponseEntity<ReadStatusDto> updateReadStatus(@PathVariable("readStatusId") UUID readStatusId, @RequestBody ReadStatusUpdateRequest request) {
+        ReadStatusDto response = readStatusService.updateReadStatus(readStatusId, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
 
     @DeleteMapping("{readStatusId}")
-    public ResponseEntity deleteReadStatus(@PathVariable("readStatusId") UUID readStatusId) {
+    public ResponseEntity<Void> deleteReadStatus(@PathVariable("readStatusId") UUID readStatusId) {
         readStatusService.deleteReadStatus(readStatusId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

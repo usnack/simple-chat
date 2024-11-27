@@ -42,16 +42,16 @@ public class ChannelController {
                 .body(response);
     }
 
-    @PatchMapping
-    public ResponseEntity<ChannelDto> updateChannel(@RequestBody ChannelUpdateRequest request) {
-        ChannelDto response = channelService.updateChannel(request);
+    @PatchMapping("{channelId}")
+    public ResponseEntity<ChannelDto> updateChannel(@PathVariable("channelId") UUID channelId, @RequestBody ChannelUpdateRequest request) {
+        ChannelDto response = channelService.updateChannel(channelId, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
 
     @DeleteMapping("{channelId}")
-    public ResponseEntity deleteChannel(@PathVariable("channelId") UUID channelId) {
+    public ResponseEntity<Void> deleteChannel(@PathVariable("channelId") UUID channelId) {
         channelService.deleteChannel(channelId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

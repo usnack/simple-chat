@@ -32,8 +32,7 @@ public class UserStatusService {
     }
 
     @Transactional
-    public UserStatusDto updateUserStatus(UserStatusUpdateRequest request) {
-        UUID userStatusId = request.userStatusId();
+    public UserStatusDto updateUserStatus(UUID userStatusId, UserStatusUpdateRequest request) {
         Long lastActiveAt = request.lastActiveAt();
 
         UserStatus userStatus = userStatusRepository.findById(userStatusId)

@@ -47,8 +47,7 @@ public class ChannelService {
     }
 
     @Transactional
-    public ChannelDto updateChannel(ChannelUpdateRequest request) {
-        UUID channelId = request.channelId();
+    public ChannelDto updateChannel(UUID channelId, ChannelUpdateRequest request) {
         String name = request.name();
         String description = request.description();
 
