@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
-@ToString(exclude = {"attachments", "author"})
+@ToString(exclude = {"channel", "attachments", "author"})
 @Entity
 @Table(name = "messages")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

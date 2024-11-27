@@ -1,12 +1,17 @@
 package io.usnack.simplechat.service;
 
 import io.usnack.simplechat.dto.data.ChannelDto;
-import io.usnack.simplechat.dto.request.ChannelCreateRequest;
-import io.usnack.simplechat.dto.request.ChannelUpdateRequest;
+import io.usnack.simplechat.dto.request.PrivateChannelCreateRequest;
+import io.usnack.simplechat.dto.request.PublicChannelCreateRequest;
+import io.usnack.simplechat.dto.request.PublicChannelUpdateRequest;
 import io.usnack.simplechat.entity.Channel;
 import io.usnack.simplechat.entity.ChannelType;
+import io.usnack.simplechat.entity.ReadStatus;
+import io.usnack.simplechat.entity.User;
 import io.usnack.simplechat.mapstruct.ChannelMapper;
 import io.usnack.simplechat.repository.ChannelRepository;
+import io.usnack.simplechat.repository.ReadStatusRepository;
+import io.usnack.simplechat.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,16 +25,34 @@ import java.util.UUID;
 public class ChannelService {
     private final ChannelRepository channelRepository;
     private final ChannelMapper channelMapper;
+    //
+    private final UserRepository userRepository;
+    private final ReadStatusRepository readStatusRepository;
 
     @Transactional
-    public ChannelDto createChannel(ChannelCreateRequest request) {
-        ChannelType type = request.type();
+    public ChannelDto createPublicChannel(PublicChannelCreateRequest request) {
         String name = request.name();
         String description = request.description();
 
-        Channel channelToCreate = new Channel(type, name, description);
+        Channel channelToCreate = new Channel(ChannelType.PUBLIC, name, description);
 
         Channel createdChannel = channelRepository.save(channelToCreate);
+        return channelMapper.toDto(createdChannel);
+    }
+
+    @Transactional
+    public ChannelDto createPrivateChannel(PrivateChannelCreateRequest request) {
+        List<UUID> userIds = request.userIds();
+
+        List<User> users = userRepository.findAllById(userIds);
+
+        String channelName = users.stream().map(User::getUsername).reduce("", (v1, v2) -> String.join(", ", v1, v2));
+        Channel channelToCreate = new Channel(ChannelType.PRIVATE, channelName, null);
+        Channel createdChannel = channelRepository.save(channelToCreate);
+
+        List<ReadStatus> readStatusListToCreate = users.stream().map(user -> new ReadStatus(user, createdChannel)).toList();
+        List<ReadStatus> createdReadStatusList = readStatusRepository.saveAll(readStatusListToCreate);
+
         return channelMapper.toDto(createdChannel);
     }
 
@@ -39,20 +62,25 @@ public class ChannelService {
                 .orElseThrow(() -> new NoSuchElementException(String.format("Channel with id %s not found", channelId)));
     }
 
-    public List<ChannelDto> findAllChannels() {
+    public List<ChannelDto> findAllChannels(UUID userId) {
+        List<UUID> channelIds = readStatusRepository.findByUserId(userId)
+                .stream().map(ReadStatus::getChannel).map(Channel::getId).toList();
 
-        return channelRepository.findAll()
+        return channelRepository.findAllByTypeOrIdIn(ChannelType.PUBLIC, channelIds)
                 .stream().map(channelMapper::toDto)
                 .toList();
     }
 
     @Transactional
-    public ChannelDto updateChannel(UUID channelId, ChannelUpdateRequest request) {
+    public ChannelDto updateGroupChannel(UUID channelId, PublicChannelUpdateRequest request) {
         String name = request.name();
         String description = request.description();
 
         Channel channel = channelRepository.findById(channelId)
                 .orElseThrow(() -> new NoSuchElementException(String.format("Channel with id %s not found", channelId)));
+        if (!channel.getType().equals(ChannelType.PUBLIC)) {
+            throw new IllegalArgumentException("Only public channels can be updated");
+        }
         channel.updateChannel(name, description);
 
         return channelMapper.toDto(channel);

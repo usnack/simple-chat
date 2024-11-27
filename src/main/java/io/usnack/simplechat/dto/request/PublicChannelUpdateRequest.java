@@ -1,6 +1,6 @@
 package io.usnack.simplechat.dto.request;
 
-public record ChannelUpdateRequest(
+public record PublicChannelUpdateRequest(
         String name,
         String description
 ) {
