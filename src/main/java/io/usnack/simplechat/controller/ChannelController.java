@@ -5,6 +5,7 @@ import io.usnack.simplechat.dto.request.PrivateChannelCreateRequest;
 import io.usnack.simplechat.dto.request.PublicChannelCreateRequest;
 import io.usnack.simplechat.dto.request.PublicChannelUpdateRequest;
 import io.usnack.simplechat.service.ChannelService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class ChannelController {
     private final ChannelService channelService;
 
     @PostMapping("public")
-    public ResponseEntity<ChannelDto> createPublicChannel(@RequestBody PublicChannelCreateRequest request) {
+    public ResponseEntity<ChannelDto> createPublicChannel(@Valid @RequestBody PublicChannelCreateRequest request) {
         ChannelDto response = channelService.createPublicChannel(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -28,7 +29,7 @@ public class ChannelController {
     }
 
     @PostMapping("private")
-    public ResponseEntity<ChannelDto> createPrivateChannel(@RequestBody PrivateChannelCreateRequest request) {
+    public ResponseEntity<ChannelDto> createPrivateChannel(@Valid @RequestBody PrivateChannelCreateRequest request) {
         ChannelDto response = channelService.createPrivateChannel(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)

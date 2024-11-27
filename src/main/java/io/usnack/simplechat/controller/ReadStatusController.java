@@ -4,6 +4,7 @@ import io.usnack.simplechat.dto.data.ReadStatusDto;
 import io.usnack.simplechat.dto.request.ReadStatusCreateRequest;
 import io.usnack.simplechat.dto.request.ReadStatusUpdateRequest;
 import io.usnack.simplechat.service.ReadStatusService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class ReadStatusController {
     private final ReadStatusService readStatusService;
 
     @PostMapping
-    public ResponseEntity<ReadStatusDto> createReadStatus(@RequestBody ReadStatusCreateRequest request) {
+    public ResponseEntity<ReadStatusDto> createReadStatus(@Valid @RequestBody ReadStatusCreateRequest request) {
         ReadStatusDto response = readStatusService.createReadStatus(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -43,7 +44,7 @@ public class ReadStatusController {
     }
 
     @PatchMapping("{readStatusId}")
-    public ResponseEntity<ReadStatusDto> updateReadStatus(@PathVariable("readStatusId") UUID readStatusId, @RequestBody ReadStatusUpdateRequest request) {
+    public ResponseEntity<ReadStatusDto> updateReadStatus(@PathVariable("readStatusId") UUID readStatusId, @Valid @RequestBody ReadStatusUpdateRequest request) {
         ReadStatusDto response = readStatusService.updateReadStatus(readStatusId, request);
         return ResponseEntity
                 .status(HttpStatus.OK)

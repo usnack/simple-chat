@@ -3,6 +3,7 @@ package io.usnack.simplechat.controller;
 import io.usnack.simplechat.dto.data.UserStatusDto;
 import io.usnack.simplechat.dto.request.UserStatusUpdateRequest;
 import io.usnack.simplechat.service.UserStatusService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,7 @@ public class UserStatusController {
     }
 
     @PatchMapping("{userStatusId}")
-    public ResponseEntity<UserStatusDto> updateUserStatus(@PathVariable("userStatusId") UUID userStatusId, @RequestBody UserStatusUpdateRequest request) {
+    public ResponseEntity<UserStatusDto> updateUserStatus(@PathVariable("userStatusId") UUID userStatusId, @Valid @RequestBody UserStatusUpdateRequest request) {
         UserStatusDto response = userStatusService.updateUserStatus(userStatusId, request);
         return ResponseEntity
                 .status(HttpStatus.OK)

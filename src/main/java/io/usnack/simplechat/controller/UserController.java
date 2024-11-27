@@ -5,6 +5,7 @@ import io.usnack.simplechat.dto.request.BinaryContentCreateRequest;
 import io.usnack.simplechat.dto.request.UserCreateRequest;
 import io.usnack.simplechat.dto.request.UserUpdateRequest;
 import io.usnack.simplechat.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,7 +26,7 @@ public class UserController {
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<UserDto> createUser(
-            @RequestPart("user") UserCreateRequest request,
+            @Valid @RequestPart("user") UserCreateRequest request,
             @RequestPart(name = "profile", required = false) MultipartFile profile
     ) {
         BinaryContentCreateRequest profileRequest = Optional.ofNullable(profile)
@@ -63,7 +64,7 @@ public class UserController {
     @PatchMapping(path = "{userId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<UserDto> updateUser(
             @PathVariable("userId") UUID userId,
-            @RequestPart("user") UserUpdateRequest request,
+            @Valid @RequestPart("user") UserUpdateRequest request,
             @RequestPart(name = "profile", required = false) MultipartFile profile
     ) {
         BinaryContentCreateRequest profileRequest = Optional.ofNullable(profile)

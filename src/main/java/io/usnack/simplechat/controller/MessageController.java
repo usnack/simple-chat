@@ -6,6 +6,7 @@ import io.usnack.simplechat.dto.request.BinaryContentCreateRequest;
 import io.usnack.simplechat.dto.request.MessageCreateRequest;
 import io.usnack.simplechat.dto.request.MessageUpdateRequest;
 import io.usnack.simplechat.service.MessageService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class MessageController {
 
     @PostMapping
     public ResponseEntity<MessageDto> createMessage(
-            @RequestPart("message") MessageCreateRequest request,
+            @Valid @RequestPart("message") MessageCreateRequest request,
             @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments
     ) {
         List<BinaryContentCreateRequest> attachmentRequests = Optional.ofNullable(attachments)
@@ -71,7 +72,7 @@ public class MessageController {
     }
 
     @PatchMapping("{messageId}")
-    public ResponseEntity<MessageDto> updateMessage(@PathVariable("messageId") UUID messageId, @RequestBody MessageUpdateRequest request) {
+    public ResponseEntity<MessageDto> updateMessage(@PathVariable("messageId") UUID messageId, @Valid @RequestBody MessageUpdateRequest request) {
         MessageDto response = messageService.updateMessage(messageId, request);
         return ResponseEntity
                 .status(HttpStatus.OK)

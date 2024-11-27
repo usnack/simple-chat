@@ -2,6 +2,7 @@ package io.usnack.simplechat.controller;
 
 import io.usnack.simplechat.dto.data.BinaryContentInputStreamDto;
 import io.usnack.simplechat.service.BinaryContentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -21,7 +22,7 @@ public class BinaryContentController {
     private final BinaryContentService binaryContentService;
 
     @GetMapping("{binaryContentId}/download")
-    public ResponseEntity<Resource> downloadBinaryContent(@PathVariable("binaryContentId") UUID binaryContentId) {
+    public ResponseEntity<Resource> downloadBinaryContent(@Valid @PathVariable("binaryContentId") UUID binaryContentId) {
         BinaryContentInputStreamDto inputStreamDto = binaryContentService.loadBinaryContent(binaryContentId);
         Resource resource = new InputStreamResource(inputStreamDto.inputStream());
 
