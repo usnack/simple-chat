@@ -11,6 +11,7 @@ import io.usnack.simplechat.mapstruct.UserMapper;
 import io.usnack.simplechat.repository.UserRepository;
 import io.usnack.simplechat.repository.UserStatusRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -30,23 +32,24 @@ public class UserService {
     private final BinaryContentService binaryContentService;
 
     @Transactional
-    public UserDto createUser(UserCreateRequest request, Optional<BinaryContentCreateRequest> profileImageRequest) {
-        String username = request.username();
-        String email = request.email();
-        String password = request.password();
-
-        BinaryContent profileBinaryContent = profileImageRequest
+    public UserDto createUser(UserCreateRequest request, Optional<BinaryContentCreateRequest> optionalProfileRequest) {
+        // create profile
+        BinaryContent profileBinaryContent = optionalProfileRequest
                 .map(binaryContentService::createBinaryContent)
                 .orElse(null);
 
+        // create user
+        String username = request.username();
+        String email = request.email();
+        String password = request.password();
         User userToCreate = new User(username, email, password, profileBinaryContent);
         User createdUser = userRepository.save(userToCreate);
 
-        UserStatus userStatusToCreate = new UserStatus(createdUser, true, Instant.now().getEpochSecond());
+        // create userStatus
+        UserStatus userStatusToCreate = new UserStatus(createdUser, Instant.now().getEpochSecond());
         userStatusRepository.save(userStatusToCreate);
 
-        UserDto response = userMapper.toDto(createdUser);
-        return response;
+        return userMapper.toDto(createdUser);
     }
 
     public UserDto findUser(UUID userId) {
@@ -56,30 +59,31 @@ public class UserService {
     }
 
     public List<UserDto> findAllUsers() {
-        List<UserDto> categories = userRepository.findAll()
+        List<UserDto> users = userRepository.findAll()
                 .stream().map(userMapper::toDto)
                 .toList();
 
-        return categories;
+        return users;
     }
 
     @Transactional
-    public UserDto updateUser(UserUpdateRequest request) {
+    public UserDto updateUser(UserUpdateRequest request, Optional<BinaryContentCreateRequest> optionalProfileRequest) {
         UUID userId = request.userId();
-        String username = request.username();
-        String email = request.email();
-        String password = request.password();
-        BinaryContentCreateRequest binaryContentCreateRequest = request.profileImage();
-
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException(String.format("User with id %s not found", userId)));
 
-        BinaryContent profileBinaryContent = binaryContentService.createBinaryContent(binaryContentCreateRequest);
+        // optional update profile
+        BinaryContent profile = optionalProfileRequest
+                .map(binaryContentService::createBinaryContent)
+                .orElse(user.getProfile());
 
-        user.updateUser(username, email, password, profileBinaryContent);
+        // user
+        String username = request.username();
+        String email = request.email();
+        String password = request.password();
+        user.updateUser(username, email, password, profile);
 
-        UserDto response = userMapper.toDto(user);
-        return response;
+        return userMapper.toDto(user);
     }
 
     @Transactional

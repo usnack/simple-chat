@@ -11,38 +11,38 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Getter
-@ToString
+@ToString(exclude = "user")
 @Entity
 @Table(name = "userStatus")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserStatus {
+    public static final long activeThreshold = 1000 * 60 * 10; // 10 minutes
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private Long createdAt;
     private Long updatedAt;
 
-    private Boolean online;
     private Long lastActiveAt;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public UserStatus(User user, Boolean online, Long lastActiveAt) {
+    public UserStatus(User user, Long lastActiveAt) {
         this.createdAt = Instant.now().getEpochSecond();
         this.user = user;
-        this.online = online;
         this.lastActiveAt = lastActiveAt;
     }
 
-    public void updateUserStatus(Boolean online, Long lastActiveAt) {
+    public void updateUserStatus(Long lastActiveAt) {
         long now = Instant.now().getEpochSecond();
-        if (online != null && !online.equals(this.online)) {
-            this.online = online;
-            this.updatedAt = now;
-        }
         if (lastActiveAt != null && !lastActiveAt.equals(this.lastActiveAt)) {
             this.lastActiveAt = lastActiveAt;
             this.updatedAt = now;
         }
+    }
+
+    public boolean isActive() {
+        long now = Instant.now().getEpochSecond();
+        return now - this.lastActiveAt < activeThreshold;
     }
 }

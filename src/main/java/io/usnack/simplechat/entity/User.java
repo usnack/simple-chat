@@ -10,7 +10,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Getter
-@ToString
+@ToString(exclude = {"profile", "status"})
 @Entity
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

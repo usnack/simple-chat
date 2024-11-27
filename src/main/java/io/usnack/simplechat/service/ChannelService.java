@@ -30,8 +30,7 @@ public class ChannelService {
         Channel channelToCreate = new Channel(type, name, description);
 
         Channel createdChannel = channelRepository.save(channelToCreate);
-        ChannelDto response = channelMapper.toDto(createdChannel);
-        return response;
+        return channelMapper.toDto(createdChannel);
     }
 
     public ChannelDto findChannel(UUID channelId) {
@@ -41,11 +40,10 @@ public class ChannelService {
     }
 
     public List<ChannelDto> findAllChannels() {
-        List<ChannelDto> channels = channelRepository.findAll()
+
+        return channelRepository.findAll()
                 .stream().map(channelMapper::toDto)
                 .toList();
-
-        return channels;
     }
 
     @Transactional
@@ -58,8 +56,7 @@ public class ChannelService {
                 .orElseThrow(() -> new NoSuchElementException(String.format("Channel with id %s not found", channelId)));
         channel.updateChannel(name, description);
 
-        ChannelDto response = channelMapper.toDto(channel);
-        return response;
+        return channelMapper.toDto(channel);
     }
 
     @Transactional

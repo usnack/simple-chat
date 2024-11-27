@@ -10,7 +10,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Getter
-@ToString
+@ToString(exclude = {"user", "channel"})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "readStatus")
@@ -20,15 +20,19 @@ public class ReadStatus {
     private Long createdAt;
     private Long updatedAt;
 
-    private UUID userId;
-    private UUID channelId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "channel_id", nullable = false)
+    private Channel channel;
     private Long lastReadAt;
 
 
-    public ReadStatus(UUID userId, UUID channelId) {
+    public ReadStatus(User user, Channel channel) {
         this.createdAt = Instant.now().toEpochMilli();
-        this.userId = userId;
-        this.channelId = channelId;
+        this.user = user;
+        this.channel = channel;
     }
 
     public void updateReadStatus(Long lastReadAt) {

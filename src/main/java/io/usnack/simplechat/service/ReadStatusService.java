@@ -3,7 +3,9 @@ package io.usnack.simplechat.service;
 import io.usnack.simplechat.dto.data.ReadStatusDto;
 import io.usnack.simplechat.dto.request.ReadStatusCreateRequest;
 import io.usnack.simplechat.dto.request.ReadStatusUpdateRequest;
+import io.usnack.simplechat.entity.Channel;
 import io.usnack.simplechat.entity.ReadStatus;
+import io.usnack.simplechat.entity.User;
 import io.usnack.simplechat.mapstruct.ReadStatusMapper;
 import io.usnack.simplechat.repository.ChannelRepository;
 import io.usnack.simplechat.repository.ReadStatusRepository;
@@ -31,18 +33,15 @@ public class ReadStatusService {
         UUID channelId = request.channelId();
         UUID userId = request.userId();
 
-        if (!channelRepository.existsById(channelId)) {
-            throw new NoSuchElementException("Channel with id " + channelId + " does not exist");
-        }
-        if (!userRepository.existsById(userId)) {
-            throw new NoSuchElementException("User with id " + userId + " does not exist");
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("User " + userId + " does not exist"));
+        Channel channel = channelRepository.findById(channelId)
+                .orElseThrow(() -> new NoSuchElementException("No channel with id " + channelId));
 
-        ReadStatus readStatusToCreate = new ReadStatus(userId, channelId);
+        ReadStatus readStatusToCreate = new ReadStatus(user, channel);
 
         ReadStatus createdReadStatus = readStatusRepository.save(readStatusToCreate);
-        ReadStatusDto response = readStatusMapper.toDto(createdReadStatus);
-        return response;
+        return readStatusMapper.toDto(createdReadStatus);
     }
 
     public ReadStatusDto findReadStatus(UUID readStatusId) {
@@ -52,11 +51,9 @@ public class ReadStatusService {
     }
 
     public List<ReadStatusDto> findAllReadStatusByUserId(UUID userId) {
-        List<ReadStatusDto> readStatuss = readStatusRepository.findByUserId(userId)
+        return readStatusRepository.findByUserId(userId)
                 .stream().map(readStatusMapper::toDto)
                 .toList();
-
-        return readStatuss;
     }
 
     @Transactional
@@ -68,8 +65,7 @@ public class ReadStatusService {
                 .orElseThrow(() -> new NoSuchElementException(String.format("readStatus with id %s not found", readStatusId)));
         readStatus.updateReadStatus(readAt);
 
-        ReadStatusDto response = readStatusMapper.toDto(readStatus);
-        return response;
+        return readStatusMapper.toDto(readStatus);
     }
 
     @Transactional

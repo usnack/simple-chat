@@ -23,8 +23,9 @@ public class Message {
     private Long updatedAt;
 
     private String content;
-    private UUID channelId;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "channel_id", nullable = false)
+    private Channel channel;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
@@ -36,10 +37,10 @@ public class Message {
     )
     private List<BinaryContent> attachments = new ArrayList<>();
 
-    public Message(String content, UUID channelId, User author, List<BinaryContent> attachments) {
+    public Message(String content, Channel channel, User author, List<BinaryContent> attachments) {
         this.createdAt = Instant.now().toEpochMilli();
         this.content = content;
-        this.channelId = channelId;
+        this.channel = channel;
         this.author = author;
         this.attachments = attachments;
     }

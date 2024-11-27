@@ -4,7 +4,6 @@ import io.usnack.simplechat.dto.data.UserStatusDto;
 import io.usnack.simplechat.dto.request.UserStatusUpdateRequest;
 import io.usnack.simplechat.entity.UserStatus;
 import io.usnack.simplechat.mapstruct.UserStatusMapper;
-import io.usnack.simplechat.repository.UserRepository;
 import io.usnack.simplechat.repository.UserStatusRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,8 +19,6 @@ public class UserStatusService {
     private final UserStatusRepository userStatusRepository;
     private final UserStatusMapper userStatusMapper;
 
-    private final UserRepository userRepository;
-
     public UserStatusDto findUserStatus(UUID userStatusId) {
         return userStatusRepository.findById(userStatusId)
                 .map(userStatusMapper::toDto)
@@ -29,25 +26,21 @@ public class UserStatusService {
     }
 
     public List<UserStatusDto> findAllUserStatus() {
-        List<UserStatusDto> userStatusList = userStatusRepository.findAll()
+        return userStatusRepository.findAll()
                 .stream().map(userStatusMapper::toDto)
                 .toList();
-
-        return userStatusList;
     }
 
     @Transactional
     public UserStatusDto updateUserStatus(UserStatusUpdateRequest request) {
         UUID userStatusId = request.userStatusId();
-        Boolean online = request.online();
         Long lastActiveAt = request.lastActiveAt();
 
         UserStatus userStatus = userStatusRepository.findById(userStatusId)
                 .orElseThrow(() -> new NoSuchElementException("UserStatus with id " + userStatusId + " does not exist"));
-        userStatus.updateUserStatus(online, lastActiveAt);
+        userStatus.updateUserStatus(lastActiveAt);
 
-        UserStatusDto userStatusDto = userStatusMapper.toDto(userStatus);
-        return userStatusDto;
+        return userStatusMapper.toDto(userStatus);
     }
 
     @Transactional

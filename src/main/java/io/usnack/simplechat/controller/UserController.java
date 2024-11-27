@@ -23,11 +23,11 @@ import java.util.UUID;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<UserDto> createUser(
             @RequestPart("user") UserCreateRequest request,
-            @RequestPart(value = "profile", required = false) MultipartFile profile
-    ) throws IOException {
+            @RequestPart(name = "profile", required = false) MultipartFile profile
+    ) {
         BinaryContentCreateRequest profileRequest = Optional.ofNullable(profile)
                 .map(multipartFile -> {
                     try {
@@ -60,16 +60,29 @@ public class UserController {
                 .body(response);
     }
 
-    @PatchMapping
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserUpdateRequest request) {
-        UserDto response = userService.updateUser(request);
+    @PatchMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<UserDto> updateUser(
+            @RequestPart("user") UserUpdateRequest request,
+            @RequestPart(name = "profile", required = false) MultipartFile profile
+    ) {
+        BinaryContentCreateRequest profileRequest = Optional.ofNullable(profile)
+                .map(multipartFile -> {
+                    try {
+                        return new BinaryContentCreateRequest(multipartFile.getOriginalFilename(), multipartFile.getContentType(), multipartFile.getBytes());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .orElse(null);
+
+        UserDto response = userService.updateUser(request, Optional.ofNullable(profileRequest));
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
 
     @DeleteMapping("{userId}")
-    public ResponseEntity deleteUser(@PathVariable("userId") UUID userId) {
+    public ResponseEntity<Void> deleteUser(@PathVariable("userId") UUID userId) {
         userService.deleteUser(userId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

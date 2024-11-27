@@ -6,6 +6,7 @@ import io.usnack.simplechat.dto.request.BinaryContentCreateRequest;
 import io.usnack.simplechat.dto.request.MessageCreateRequest;
 import io.usnack.simplechat.dto.request.MessageUpdateRequest;
 import io.usnack.simplechat.entity.BinaryContent;
+import io.usnack.simplechat.entity.Channel;
 import io.usnack.simplechat.entity.Message;
 import io.usnack.simplechat.entity.User;
 import io.usnack.simplechat.mapstruct.MessageMapper;
@@ -37,23 +38,22 @@ public class MessageService {
         UUID channelId = request.channelId();
         UUID authorId = request.authorId();
 
-        if (!channelRepository.existsById(channelId)) {
-            throw new NoSuchElementException("Channel with id " + channelId + " does not exist");
-        }
+        Channel channel = channelRepository.findById(channelId)
+                .orElseThrow(() -> new NoSuchElementException("Channel with id " + channelId + " does not exist"));
         User author = userRepository.findById(authorId)
                 .orElseThrow(() -> new NoSuchElementException("User with id " + authorId + " does not exist"));
-        List<BinaryContent> binaryContents = attachmentRequests
+
+        List<BinaryContent> attachments = attachmentRequests
                 .map(binaryContentRequests -> binaryContentRequests.stream()
                         .map(binaryContentService::createBinaryContent)
                         .toList()
                 )
                 .orElse(new ArrayList<>());
 
-        Message messageToCreate = new Message(content, channelId, author, binaryContents);
+        Message messageToCreate = new Message(content, channel, author, attachments);
         Message createdMessage = messageRepository.save(messageToCreate);
 
-        MessageDto response = messageMapper.toDto(createdMessage);
-        return response;
+        return messageMapper.toDto(createdMessage);
     }
 
     public MessageDto findMessage(UUID messageId) {
@@ -67,14 +67,12 @@ public class MessageService {
         Page<Message> messagePage = messageRepository.findByChannelId(channelId, pageRequest);
 
         List<MessageDto> messageDtos = messagePage
-                // FIXME attachments mapping
-                .stream().map(message -> messageMapper.toDto(message))
+                .stream().map(messageMapper::toDto)
                 .sorted(Comparator.comparingLong(MessageDto::createdAt))
                 .toList();
 
         boolean hasMore = messagePage.hasNext();
-        PageableData<MessageDto> response = new PageableData<>(messageDtos, hasMore, hasMore ? page + 1 : page, size);
-        return response;
+        return new PageableData<>(messageDtos, hasMore, hasMore ? page + 1 : page, size);
     }
 
     @Transactional
@@ -86,8 +84,7 @@ public class MessageService {
                 .orElseThrow(() -> new NoSuchElementException(String.format("Message with id %s not found", messageId)));
         message.updateMessage(content);
 
-        MessageDto response = messageMapper.toDto(message);
-        return response;
+        return messageMapper.toDto(message);
     }
 
     @Transactional
