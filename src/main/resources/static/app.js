@@ -389,3 +389,132 @@ dmSearchInput.addEventListener('input', (e) => {
         item.style.display = shouldShow ? 'flex' : 'none';
     });
 });
+
+// DOM 요소 선택
+const editChannelModal = document.getElementById('editChannelModal');
+const deleteChannelModal = document.getElementById('deleteChannelModal');
+const editCloseBtn = editChannelModal.querySelector('.edit-channel-close-btn');
+const editChannelNameInput = editChannelModal.querySelector('#channelNameInput');
+const editChannelDescInput = editChannelModal.querySelector('#channelDescriptionInput');
+const editCharCount = editChannelModal.querySelector('.edit-channel-char-count');
+const deleteBtn = editChannelModal.querySelector('.edit-channel-delete-btn');
+const deleteConfirmBtn = deleteChannelModal.querySelector('.delete-channel-confirm-btn');
+const deleteCancelBtn = deleteChannelModal.querySelector('.delete-channel-cancel-btn');
+const saveButton = editChannelModal.querySelector('.edit-channel-save-btn');
+
+// 초기 값 저장을 위한 변수
+let originalName = '';
+let originalDesc = '';
+
+// 모달 열기 함수
+function openEditChannelModal() {
+    editChannelModal.style.display = 'flex';
+    originalName = editChannelNameInput.value;
+    originalDesc = editChannelDescInput.value;
+    saveButton.classList.remove('active');
+    updateCharCount();
+}
+
+// 모달 닫기 함수
+function closeEditChannelModal() {
+    editChannelModal.style.display = 'none';
+    // 입력값 초기화
+    editChannelNameInput.value = originalName;
+    editChannelDescInput.value = originalDesc;
+    saveButton.classList.remove('active');
+}
+
+// 삭제 모달 열기 함수
+function openDeleteChannelModal() {
+    deleteChannelModal.style.display = 'flex';
+}
+
+// 삭제 모달 닫기 함수
+function closeDeleteChannelModal() {
+    deleteChannelModal.style.display = 'none';
+}
+
+// 글자 수 업데이트
+function updateCharCount() {
+    const count = editChannelDescInput.value.length;
+    editCharCount.textContent = `${count}/1024`;
+}
+
+// 변경사항 체크
+function checkChanges() {
+    const hasChanges =
+        editChannelNameInput.value !== originalName ||
+        editChannelDescInput.value !== originalDesc;
+
+    saveButton.classList.toggle('active', hasChanges);
+}
+
+// 채널 삭제
+function deleteChannel() {
+    // TODO: 채널 삭제 로직 구현
+    console.log('Deleting channel');
+    closeDeleteChannelModal();
+    closeEditChannelModal();
+}
+
+// 변경사항 저장
+function saveChanges() {
+    if (!saveButton.classList.contains('active')) return;
+
+    // TODO: 변경사항 저장 로직 구현
+    console.log('Saving changes:', {
+        name: editChannelNameInput.value,
+        description: editChannelDescInput.value
+    });
+
+    originalName = editChannelNameInput.value;
+    originalDesc = editChannelDescInput.value;
+    saveButton.classList.remove('active');
+}
+
+// 이벤트 리스너 등록
+channels.forEach(channel => {
+    const editBtn = channel.querySelector('.edit-btn');
+    if (editBtn) {
+        editBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openEditChannelModal();
+        });
+    }
+});
+
+editCloseBtn.addEventListener('click', closeEditChannelModal);
+editChannelNameInput.addEventListener('input', checkChanges);
+editChannelDescInput.addEventListener('input', () => {
+    updateCharCount();
+    checkChanges();
+});
+
+deleteBtn.addEventListener('click', openDeleteChannelModal);
+deleteConfirmBtn.addEventListener('click', deleteChannel);
+deleteCancelBtn.addEventListener('click', closeDeleteChannelModal);
+saveButton.addEventListener('click', saveChanges);
+
+// 모달 외부 클릭 시 닫기
+editChannelModal.addEventListener('click', (e) => {
+    if (e.target === editChannelModal) {
+        closeEditChannelModal();
+    }
+});
+
+deleteChannelModal.addEventListener('click', (e) => {
+    if (e.target === deleteChannelModal) {
+        closeDeleteChannelModal();
+    }
+});
+
+// ESC 키로 모달 닫기
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        if (deleteChannelModal.style.display === 'flex') {
+            closeDeleteChannelModal();
+        } else if (editChannelModal.style.display === 'flex') {
+            closeEditChannelModal();
+        }
+    }
+});

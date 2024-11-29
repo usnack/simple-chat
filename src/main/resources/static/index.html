@@ -273,6 +273,63 @@
   </div>
 </div>
 
+
+<!-- 채널 편집 모달 -->
+<div class="modal-overlay edit-channel-modal" id="editChannelModal">
+  <div class="edit-channel-container">
+    <div class="edit-channel-header">
+      <h2>일반</h2>
+      <button class="edit-channel-close-btn">×</button>
+    </div>
+    <div class="edit-channel-content">
+      <div class="edit-channel-section">
+        <h3>채널 이름</h3>
+        <div class="edit-channel-input-wrapper">
+          <input type="text" id="channelNameInput" class="edit-channel-input" value="일반" maxlength="100">
+        </div>
+      </div>
+
+      <div class="edit-channel-section">
+        <h3>채널 주제</h3>
+        <div class="edit-channel-input-wrapper">
+          <textarea id="channelDescriptionInput" class="edit-channel-input" placeholder="이 채널을 어떻게 사용하면 좋을지 모두에게 알려주시다!" maxlength="1024"></textarea>
+          <div class="edit-channel-char-count">0/1024</div>
+        </div>
+      </div>
+    </div>
+    <div class="edit-channel-footer">
+      <div class="edit-channel-footer-left">
+        <button class="edit-channel-delete-btn">
+          채널 삭제하기
+          <svg width="16" height="16" viewBox="0 0 24 24" class="delete-icon">
+            <path fill="currentColor" d="M15 3.999V2H9V3.999H3V5.999H21V3.999H15Z"></path>
+            <path fill="currentColor" d="M5 6.99902V18.999C5 20.101 5.897 20.999 7 20.999H17C18.103 20.999 19 20.101 19 18.999V6.99902H5ZM11 17H9V11H11V17ZM15 17H13V11H15V17Z"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="edit-channel-footer-right">
+        <button class="edit-channel-save-btn" disabled>변경사항 저장하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 채널 삭제 확인 모달 -->
+<div class="modal-overlay delete-channel-modal" id="deleteChannelModal">
+  <div class="delete-channel-container">
+    <div class="delete-channel-header">
+      <h2>채널 삭제하기</h2>
+    </div>
+    <div class="delete-channel-content">
+      <p>정말 #일반 채널을 삭제할까요? 삭제하면 되돌릴 수 없어요.</p>
+    </div>
+    <div class="delete-channel-footer">
+      <button class="delete-channel-cancel-btn">취소</button>
+      <button class="delete-channel-confirm-btn">채널 삭제하기</button>
+    </div>
+  </div>
+</div>
+
 <script src="app.js"></script>
 </body>
 </html>

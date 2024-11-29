@@ -834,3 +834,228 @@ body {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+/* 채널 편집 모달 스타일 */
+.edit-channel-modal {
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+}
+
+.edit-channel-container {
+    background-color: #313338;
+    border-radius: 4px;
+    width: 660px;
+    max-width: 90%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.edit-channel-header {
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.edit-channel-header h2 {
+    color: #f2f3f5;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.edit-channel-close-btn {
+    background: none;
+    border: none;
+    color: #949ba4;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.edit-channel-close-btn:hover {
+    color: #dbdee1;
+    background-color: rgba(255,255,255,0.05);
+}
+
+.edit-channel-content {
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.edit-channel-section {
+    margin-bottom: 24px;
+}
+
+.edit-channel-section h3 {
+    color: #b5bac1;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin: 0 0 8px 0;
+}
+
+.edit-channel-input-wrapper {
+    position: relative;
+}
+
+.edit-channel-input {
+    width: 100%;
+    background-color: #111214;
+    border: none;
+    border-radius: 3px;
+    color: #dbdee1;
+    font-size: 16px;
+    padding: 10px;
+    outline: none;
+    resize: none;
+}
+
+.edit-channel-input:focus {
+    box-shadow: 0 0 0 1px rgba(88, 101, 242, 0.3);
+}
+
+textarea.edit-channel-input {
+    min-height: 120px;
+    margin-bottom: 24px;
+}
+
+.edit-channel-char-count {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    color: #949ba4;
+    font-size: 12px;
+}
+
+.edit-channel-footer {
+    padding: 16px;
+    background-color: #2b2d31;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.edit-channel-delete-btn {
+    background: none;
+    border: none;
+    color: #f23f42;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 3px;
+}
+
+.edit-channel-delete-btn:hover {
+    background-color: rgba(242, 63, 66, 0.1);
+}
+
+.edit-channel-delete-btn .delete-icon {
+    margin-top: -2px;
+}
+
+.edit-channel-save-btn {
+    padding: 8px 16px;
+    background-color: #5865f2;
+    border: none;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.edit-channel-save-btn.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.edit-channel-save-btn.active:hover {
+    background-color: #4752c4;
+}
+
+/* 채널 삭제 확인 모달 스타일 */
+.delete-channel-modal {
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 1001;
+}
+
+.delete-channel-container {
+    background-color: #313338;
+    border-radius: 4px;
+    width: 440px;
+    max-width: 90%;
+}
+
+.delete-channel-header {
+    padding: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.delete-channel-header h2 {
+    color: #f2f3f5;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.delete-channel-content {
+    padding: 16px;
+}
+
+.delete-channel-content p {
+    color: #dbdee1;
+    font-size: 16px;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.delete-channel-footer {
+    padding: 16px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.delete-channel-cancel-btn,
+.delete-channel-confirm-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 3px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.delete-channel-cancel-btn {
+    background: none;
+    color: #fff;
+}
+
+.delete-channel-cancel-btn:hover {
+    text-decoration: underline;
+}
+
+.delete-channel-confirm-btn {
+    background-color: #f23f42;
+    color: #fff;
+}
+
+.delete-channel-confirm-btn:hover {
+    background-color: #da373c;
+}
