@@ -199,3 +199,76 @@ function formatDateDivider(date) {
         day: 'numeric'
     }).format(date);
 }
+
+
+const createChannelModal = document.getElementById('createChannelModal');
+const closeModalButton = createChannelModal.querySelector('.create-channel-close-btn');
+const cancelButton = createChannelModal.querySelector('.create-channel-cancel-btn');
+const createButton = createChannelModal.querySelector('.create-channel-submit-btn');
+const channelNameInput = document.getElementById('channelNameInput');
+const channelDescriptionInput = document.getElementById('channelDescriptionInput');
+
+// 채널명 유효성 검사 정규식
+const channelNameRegex = /^[a-z0-9-]+$/;
+
+// 모달 열기 함수
+function openCreateChannelModal() {
+    createChannelModal.style.display = 'flex';
+    channelNameInput.value = '';
+    channelDescriptionInput.value = '';
+    channelNameInput.focus();
+    updateCreateButton();
+}
+
+// 모달 닫기 함수
+function closeCreateChannelModal() {
+    createChannelModal.style.display = 'none';
+}
+
+// 채널명 유효성 검사 및 생성 버튼 활성화 함수
+function updateCreateButton() {
+    const channelName = channelNameInput.value.trim();
+    const isValid = channelName.length > 0 && channelNameRegex.test(channelName);
+    createButton.disabled = !isValid;
+}
+
+// 이벤트 리스너 등록
+addChannelButton.addEventListener('click', openCreateChannelModal);
+closeModalButton.addEventListener('click', closeCreateChannelModal);
+cancelButton.addEventListener('click', closeCreateChannelModal);
+channelNameInput.addEventListener('input', updateCreateButton);
+
+// 채널 생성 버튼 클릭 이벤트
+createButton.addEventListener('click', () => {
+    const channelName = channelNameInput.value.trim();
+    const channelDescription = channelDescriptionInput.value.trim();
+
+    // TODO: 채널 생성 로직 구현
+    console.log('Creating channel:', {
+        name: channelName,
+        description: channelDescription
+    });
+
+    closeCreateChannelModal();
+});
+
+// 모달 외부 클릭 시 닫기
+createChannelModal.addEventListener('click', (e) => {
+    if (e.target === createChannelModal) {
+        closeCreateChannelModal();
+    }
+});
+
+// ESC 키로 모달 닫기
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && createChannelModal.style.display === 'flex') {
+        closeCreateChannelModal();
+    }
+});
+
+// Enter 키로 채널 생성
+channelDescriptionInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !createButton.disabled) {
+        createButton.click();
+    }
+});

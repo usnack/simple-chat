@@ -194,6 +194,36 @@
   </aside>
 </div>
 
+<div class="modal-overlay create-channel-modal" id="createChannelModal">
+  <div class="create-channel-container">
+    <div class="create-channel-header">
+      <h2>채널 만들기</h2>
+      <button class="create-channel-close-btn">×</button>
+    </div>
+    <div class="create-channel-content">
+      <div class="create-channel-name-input">
+        <h3>채널 이름</h3>
+        <div class="create-channel-input-wrapper">
+          <span class="create-channel-prefix">#</span>
+          <input type="text" id="channelNameInput" placeholder="새로운-채널" maxlength="30">
+        </div>
+        <span class="create-channel-input-desc">채널 이름은 소문자, 숫자, 하이픈만 사용할 수 있습니다.</span>
+      </div>
+      <div class="create-channel-description-input">
+        <h3>채널 설명</h3>
+        <div class="create-channel-input-wrapper">
+          <input type="text" id="channelDescriptionInput" placeholder="채널에 대해 설명해 주세요" maxlength="100">
+        </div>
+      </div>
+    </div>
+    <div class="create-channel-footer">
+      <button class="create-channel-cancel-btn">취소</button>
+      <button class="create-channel-submit-btn" disabled>채널 만들기</button>
+    </div>
+  </div>
+</div>
+
+
 <script src="app.js"></script>
 </body>
 </html>
