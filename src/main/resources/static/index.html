@@ -224,6 +224,55 @@
 </div>
 
 
+<div class="modal-overlay create-dm-modal" id="createDmModal">
+  <div class="create-dm-container">
+    <div class="create-dm-header">
+      <h2>친구 선택하기</h2>
+      <div class="create-dm-subtitle">친구를 8명 더 추가할 수 있어요.</div>
+      <button class="create-dm-close-btn">×</button>
+    </div>
+    <div class="create-dm-content">
+      <div class="create-dm-search">
+        <div class="create-dm-search-chips">
+          <!-- 선택된 유저들의 칩이 여기에 동적으로 추가됨 -->
+        </div>
+        <input type="text" class="create-dm-search-input" placeholder="대화 찾기 또는 시작하기">
+      </div>
+      <div class="create-dm-users">
+        <div class="create-dm-user">
+          <div class="user-avatar-wrapper">
+            <div class="user-avatar small">Y</div>
+          </div>
+          <div class="create-dm-user-info">
+            <div class="create-dm-username">예토깽</div>
+            <div class="create-dm-userid">usnack</div>
+          </div>
+          <div class="create-dm-user-checkbox">
+            <input type="checkbox" id="dmUser1" class="create-dm-checkbox">
+            <label for="dmUser1"></label>
+          </div>
+        </div>
+        <div class="create-dm-user">
+          <div class="user-avatar-wrapper">
+            <div class="user-avatar small">Y</div>
+          </div>
+          <div class="create-dm-user-info">
+            <div class="create-dm-username">youtube</div>
+            <div class="create-dm-userid">youtube_0522_58225</div>
+          </div>
+          <div class="create-dm-user-checkbox">
+            <input type="checkbox" id="dmUser2" class="create-dm-checkbox">
+            <label for="dmUser2"></label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="create-dm-footer">
+      <button class="create-dm-submit-btn" disabled>DM 생성</button>
+    </div>
+  </div>
+</div>
+
 <script src="app.js"></script>
 </body>
 </html>

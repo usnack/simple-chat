@@ -272,3 +272,120 @@ channelDescriptionInput.addEventListener('keypress', (e) => {
         createButton.click();
     }
 });
+
+const dmModal = document.getElementById('createDmModal');
+const dmCloseBtn = dmModal.querySelector('.create-dm-close-btn');
+const dmSubmitBtn = dmModal.querySelector('.create-dm-submit-btn');
+const dmSearchInput = dmModal.querySelector('.create-dm-search-input');
+const dmSearchChips = dmModal.querySelector('.create-dm-search-chips');
+const dmCheckboxes = dmModal.querySelectorAll('.create-dm-checkbox');
+
+// 선택된 유저 정보를 저장할 Set
+const selectedUsers = new Set();
+
+// 칩 생성 함수
+function createUserChip(userId, username) {
+    const chip = document.createElement('div');
+    chip.className = 'create-dm-search-chip';
+    chip.innerHTML = `
+    ${username}
+    <button class="create-dm-search-chip-remove" data-user-id="${userId}">×</button>
+  `;
+
+    chip.querySelector('button').addEventListener('click', () => {
+        const checkbox = document.getElementById(userId);
+        if (checkbox) {
+            checkbox.checked = false;
+        }
+        selectedUsers.delete(userId);
+        chip.remove();
+        updateSubmitButton();
+    });
+
+    return chip;
+}
+
+// 체크박스 변경 처리 함수
+function handleCheckboxChange(e) {
+    const checkbox = e.target;
+    const userId = checkbox.id;
+    const userEl = checkbox.closest('.create-dm-user');
+    const username = userEl.querySelector('.create-dm-username').textContent;
+
+    if (checkbox.checked) {
+        selectedUsers.add(userId);
+        dmSearchChips.appendChild(createUserChip(userId, username));
+    } else {
+        selectedUsers.delete(userId);
+        const chip = dmSearchChips.querySelector(`[data-user-id="${userId}"]`);
+        if (chip) {
+            chip.parentElement.remove();
+        }
+    }
+
+    updateSubmitButton();
+}
+
+// Submit 버튼 상태 업데이트
+function updateSubmitButton() {
+    dmSubmitBtn.disabled = selectedUsers.size === 0;
+}
+
+// 모달 열기 함수
+function openDmModal() {
+    dmModal.style.display = 'flex';
+    dmSearchInput.value = '';
+    dmSearchInput.focus();
+    // 초기화
+    selectedUsers.clear();
+    dmSearchChips.innerHTML = '';
+    dmCheckboxes.forEach(cb => cb.checked = false);
+    updateSubmitButton();
+}
+
+// 모달 닫기 함수
+function closeDmModal() {
+    dmModal.style.display = 'none';
+}
+
+// 이벤트 리스너 등록
+addDmButton.addEventListener('click', openDmModal);
+dmCloseBtn.addEventListener('click', closeDmModal);
+
+// 체크박스 변경 이벤트
+dmCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', handleCheckboxChange);
+});
+
+// 모달 외부 클릭 시 닫기
+dmModal.addEventListener('click', (e) => {
+    if (e.target === dmModal) {
+        closeDmModal();
+    }
+});
+
+// ESC 키로 모달 닫기
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && dmModal.style.display === 'flex') {
+        closeDmModal();
+    }
+});
+
+// DM 생성 버튼 클릭 이벤트
+dmSubmitBtn.addEventListener('click', () => {
+    console.log('Creating DM with users:', Array.from(selectedUsers));
+    closeDmModal();
+});
+
+// 검색 기능 구현
+dmSearchInput.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const userItems = dmModal.querySelectorAll('.create-dm-user');
+
+    userItems.forEach(item => {
+        const username = item.querySelector('.create-dm-username').textContent.toLowerCase();
+        const userid = item.querySelector('.create-dm-userid').textContent.toLowerCase();
+        const shouldShow = username.includes(searchTerm) || userid.includes(searchTerm);
+        item.style.display = shouldShow ? 'flex' : 'none';
+    });
+});
