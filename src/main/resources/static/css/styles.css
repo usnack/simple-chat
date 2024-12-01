@@ -1,0 +1,313 @@
+/* Reset & Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-primary: #313338;
+    --bg-secondary: #2b2d31;
+    --bg-tertiary: #1e1f22;
+    --bg-profile: #232428;
+
+    --text-primary: #f2f3f5;
+    --text-secondary: #949ba4;
+    --text-muted: #80848e;
+
+    --channel-text: #949ba4;
+    --channel-hover: rgba(79, 84, 92, 0.2);
+    --channel-active: rgba(79, 84, 92, 0.3);
+
+    --status-online: #23a55a;
+    --status-offline: #80848e;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: gg sans, "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.375;
+    overflow: hidden;
+}
+
+/* Layout */
+.app {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+/* Channels Container */
+.channels-container {
+    width: 240px;
+    min-width: 240px;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-secondary);
+}
+
+.channels-list {
+    flex: 1;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+/* Main Chat Container */
+.chat-container {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+}
+
+.chat-area {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+/* Members List */
+.members-list {
+    width: 240px;
+    min-width: 240px;
+    padding: 24px 8px 8px;
+    background-color: var(--bg-primary);
+    overflow-y: scroll;
+}
+
+/* Channel Styles */
+.channel-category {
+    padding: 24px 8px 4px 10px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.channel {
+    padding: 6px 8px;
+    margin: 1px 2px;
+    color: var(--channel-text);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.channel:hover {
+    background-color: var(--channel-hover);
+    color: var(--text-primary);
+}
+
+.channel.active {
+    background-color: var(--channel-active);
+    color: var(--text-primary);
+}
+
+/* Chat Elements */
+.chat-header {
+    height: 48px;
+    min-height: 48px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--bg-tertiary);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 16px;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.chat-input {
+    padding: 0 16px 24px;
+}
+
+.chat-input input {
+    width: 100%;
+    padding: 11px 16px;
+    background-color: #383a40;
+    border: none;
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 16px;
+}
+
+.chat-input input:focus {
+    outline: none;
+}
+
+/* Common Elements */
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #5865f2;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    color: white;
+    flex-shrink: 0;
+}
+
+.status-indicator {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 4px solid var(--bg-secondary);
+}
+
+.status-online {
+    background-color: var(--status-online);
+}
+
+.status-offline {
+    background-color: var(--status-offline);
+}
+
+/* User Profile */
+.user-profile {
+    height: 52px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--bg-profile);
+    margin-top: auto;
+}
+
+.user-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.user-status {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+/* DM Channel Styles */
+.dm-channel {
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    margin: 1px 2px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--channel-text);
+}
+
+.dm-channel:hover {
+    background-color: var(--channel-hover);
+    color: var(--text-primary);
+}
+
+.dm-channel.active {
+    background-color: var(--channel-active);
+    color: var(--text-primary);
+}
+
+.dm-channel .member-info {
+    margin-left: 12px;
+    font-size: 16px;
+}
+
+/* Message Styles */
+.message {
+    display: flex;
+    gap: 16px;
+    padding: 2px 0;
+}
+
+.message-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.message-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.message-author {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.message-time {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.message-text {
+    color: var(--text-primary);
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(24, 25, 28, 0.6);
+    border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(24, 25, 28, 0.8);
+}
+
+/* Members List Styles */
+.members-category {
+    padding: 0 8px 4px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.member {
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--channel-text);
+}
+
+.member .member-info {
+    margin-left: 12px;
+}
+
+.member:hover {
+    background-color: var(--channel-hover);
+    color: var(--text-primary);
+}
