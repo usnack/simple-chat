@@ -311,3 +311,101 @@ html, body {
     background-color: var(--channel-hover);
     color: var(--text-primary);
 }
+
+
+/* Server Label */
+.server-label {
+    padding: 16px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--bg-tertiary);
+    cursor: pointer;
+}
+
+.server-label:hover {
+    background-color: var(--bg-tertiary);
+}
+
+.server-name {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Category Headers */
+.category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 4px;
+}
+
+.category-icon {
+    color: var(--text-muted);
+    cursor: pointer;
+    opacity: 0;
+    padding: 4px;
+    font-size: 20px;
+    font-weight: 500;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    margin-right: 4px;
+}
+
+.channel-category:hover .category-icon {
+    opacity: 1;
+}
+
+.category-icon:hover {
+    color: var(--text-primary);
+    background-color: var(--channel-hover);
+}
+
+/* Channel Settings */
+.channel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.channel-settings {
+    opacity: 0;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+}
+
+.channel:hover .channel-settings {
+    opacity: 1;
+}
+
+.channel-settings:hover {
+    color: var(--text-primary);
+}
+
+/* DM Channel Delete */
+.dm-channel {
+    position: relative;
+}
+
+.dm-delete {
+    position: absolute;
+    right: 8px;
+    opacity: 0;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+}
+
+.dm-channel:hover .dm-delete {
+    opacity: 1;
+}
+
+.dm-delete:hover {
+    color: var(--text-primary);
+}
